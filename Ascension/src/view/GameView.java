@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -15,6 +16,7 @@ import javax.swing.JPanel;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -29,31 +31,82 @@ import model.GameModel;
 
 import javax.swing.JLabel;
 
+import view.ViewUtil.CardSize;
+import view.panels.CenterPanel;
+import view.panels.CommonCardsPanel;
+import view.panels.ConstructsPanel;
+import view.panels.DeckPanel;
+import view.panels.HandPanel;
+import view.panels.PlayedPanel;
+import view.panels.StatusPanel;
+
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
-public class GameView implements IGameView {
-
+public class GameView
+{
+	private static final int CENTER_ROW_X = 175;
+	private static final int CENTER_ROW_Y = 200;
+	
+	private static final int HAND_X = 700;
+	private static final int HAND_Y = 675;
+	private static final int HAND_WIDTH_MAX = 700;
+	
+	private static final int COMMON_CARDS_X = 50;
+	private static final int COMMON_CARDS_Y = 50;
+	
+	private static final int PLAYED_X = 700;
+	private static final int PLAYED_Y = 475;
+	private static final int PLAYED_WIDTH_MAX = 700;
+	
+	private static final int CONSTRUCTS_X = 200;
+	private static final int CONSTRUCTS_Y = 700;
+	private static final int CONSTRUCTS_WIDTH_MAX = 300;
+	
+	private static final int PLAYER_DECK_X = 10;
+	private static final int PLAYER_DECK_Y = 500;
+	
+	private static final int PLAYER_DISCARD_X = 1200;
+	private static final int PLAYER_DISCARD_Y = 500;
+	
+	private static final int CENTER_DECK_X = 1000;
+	private static final int CENTER_DECK_Y = 20;
+	
+	private static final int CENTER_DISCARD_X = 1150;
+	private static final int CENTER_DISCARD_Y = 20;
+	
+	private static final int RESOURCES_X = 700;
+	private static final int RESOURCES_Y = 100;
+	
+	private static final int DEFAULT_SPACING = 5;
+	
+	
 	private JFrame frame;
 	private GameController controller;
+	
+	//Card panels
 	private CenterPanel centerRowPanel;
 	private HandPanel handPanel;
 	private PlayedPanel playedPanel;
-	private JPanel centerDeckPanel;
+	private CommonCardsPanel commonCardsPanel;
+	private ConstructsPanel constructsPanel;
+	
+	//Deck panels
+	private DeckPanel centerDeckPanel;
+	private DeckPanel centerDiscardPanel;
+	private DeckPanel playerDeckPanel;
+	private DeckPanel playerDiscardPanel;
+	
+	//Other
 	private StatusPanel statusPanel;
-
-	private JPanel playerDeckPanel;
-	private JLabel playerDeckLabel;
-	private JPanel playerDiscardPanel;
-	private JLabel playerDiscardLabel;
 	
 	private JLabel playerNameLabel;
 	private JButton endTurnButton;
-	private CommonCardsPanel commonCardsPanel;
 
 	/**
 	 * Launch the application.
@@ -86,51 +139,42 @@ public class GameView implements IGameView {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize(GameController controller) 
+	private void initialize(final GameController controller) 
 	{
 		this.controller = controller;
 		
 		frame = new JFrame();
 		frame.setBounds(100, 100, 1400, 900);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//frame.getContentPane().setLayout(null);
 		
 		//background image
-		TiledImage background = new TiledImage("/cards/images/Apprentice.jpg");
-		background.setBounds(50, 20, 500, 500);
-		//frame.getContentPane()
+		TiledImage background = new TiledImage("/assets/Blue_cell_computer_background.jpg");
+		background.setBounds(0, 0, 1400, 900);
 		frame.getLayeredPane().add(background, new Integer(0));
 		
 		playerNameLabel = new JLabel("Ascension");
-		ViewUtil.setStyle(playerNameLabel, "h1");
+		ViewUtil.setStyle(playerNameLabel, ViewUtil.Style.H1);
 		playerNameLabel.setBounds(500, 20, 500, 50);
 		frame.getLayeredPane().add(playerNameLabel, new Integer(1));
 		
-		centerRowPanel = new CenterPanel(controller);
+		//Card panels
+		centerRowPanel = new CenterPanel(controller, GameModel.CENTER_ROW_SIZE, CENTER_ROW_X, CENTER_ROW_Y, DEFAULT_SPACING);
 		frame.getLayeredPane().add(centerRowPanel, new Integer(1));
 		
-		handPanel = new HandPanel(controller);
+		handPanel = new HandPanel(controller, HAND_X, HAND_Y, HAND_WIDTH_MAX, DEFAULT_SPACING);
 		frame.getLayeredPane().add(handPanel, new Integer(1));
 		
-		playedPanel = new PlayedPanel(controller);
+		playedPanel = new PlayedPanel(controller, PLAYED_X, PLAYED_Y, DEFAULT_SPACING, PLAYED_WIDTH_MAX);
 		frame.getLayeredPane().add(playedPanel, new Integer(1));
 		
-		centerDeckPanel = new JPanel();
-		centerDeckPanel.setBounds(251, 11, ViewUtil.CARD_WIDTH*2, ViewUtil.CARD_HEIGHT);
-		frame.getLayeredPane().add(centerDeckPanel, new Integer(1));
-		centerDeckPanel.setLayout(new GridLayout(0, 2, 0, 0));
-		
-		commonCardsPanel = new CommonCardsPanel(controller);
+		commonCardsPanel = new CommonCardsPanel(controller, COMMON_CARDS_X, COMMON_CARDS_Y, DEFAULT_SPACING);
 		frame.getLayeredPane().add(commonCardsPanel, new Integer(1));
 		
-		JButton btnNewButton_6 = new JButton("New button");
-		centerDeckPanel.add(btnNewButton_6);
+		constructsPanel = new ConstructsPanel(controller, CONSTRUCTS_X, CONSTRUCTS_Y, DEFAULT_SPACING, CONSTRUCTS_WIDTH_MAX);
+		frame.getLayeredPane().add(constructsPanel, new Integer(1));
 		
-		JButton btnNewButton_7 = new JButton("New button");
-		centerDeckPanel.add(btnNewButton_7);
-		
-		statusPanel = new StatusPanel();
-		statusPanel.setBounds(50, 11, 167, 55);
+		//Other
+		statusPanel = new StatusPanel(RESOURCES_X, RESOURCES_Y);
 		frame.getLayeredPane().add(statusPanel, new Integer(1));
 		
 		endTurnButton = new JButton(new endTurnAction());
@@ -138,32 +182,38 @@ public class GameView implements IGameView {
 		endTurnButton.setBounds(1100, 400, 167, 55);
 		frame.getLayeredPane().add(endTurnButton, new Integer(1));
 		
-		playerDeckPanel = new JPanel();
-		playerDeckPanel.setBounds(10, 500, 130, 217);
-		frame.getLayeredPane().add(playerDeckPanel);
-		playerDeckPanel.setLayout(null);
+		//Deck panels
+		playerDeckPanel = new DeckPanel(PLAYER_DECK_X, PLAYER_DECK_Y, "/assets/cardback-green.jpg", 
+				new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						controller.defeatCultist();						
+					}	}	);
+		frame.getLayeredPane().add(playerDeckPanel, new Integer(1));
 		
-		JLabel lblPlayerDeck = makeLabel("Deck");
-		lblPlayerDeck.setBounds(10, 0, 110, 29);
-		playerDeckPanel.add(lblPlayerDeck);
-		
-		playerDeckLabel = makeLabelWithImage("/cards/images/Apprentice.jpg");
-		playerDeckLabel.setBounds(0, 40, 130, 177);
-		playerDeckPanel.add(playerDeckLabel);
-		
-		playerDiscardPanel = new JPanel();
-		playerDiscardPanel.setLayout(null);
-		playerDiscardPanel.setBounds(1073, 500, 130, 217);
+		playerDiscardPanel = new DeckPanel(PLAYER_DISCARD_X, PLAYER_DISCARD_Y, "/assets/cardback-red.jpg", 
+				new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						controller.defeatCultist();						
+					}	}	);
 		frame.getLayeredPane().add(playerDiscardPanel, new Integer(1));
 		
-		JLabel label = makeLabel("Discard");
-		label.setBounds(10, 0, 110, 29);
-		playerDiscardPanel.add(label);
+		centerDeckPanel = new DeckPanel(CENTER_DECK_X, CENTER_DECK_Y, "/assets/cardback.jpg", 
+				new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						controller.defeatCultist();						
+					}	}	);
+		frame.getLayeredPane().add(centerDeckPanel, new Integer(1));
 		
-		playerDiscardLabel = makeLabelWithImage("/cards/images/Apprentice.jpg");
-		playerDiscardLabel.setBounds(0, 40, 130, 177);
-		playerDiscardPanel.add(playerDiscardLabel);
-
+		centerDiscardPanel = new DeckPanel(CENTER_DISCARD_X, CENTER_DISCARD_Y, "/assets/cardback-purple.jpg", 
+				new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						controller.defeatCultist();						
+					}	}	);
+		frame.getLayeredPane().add(centerDiscardPanel, new Integer(1));
 	}
 	
 	public class endTurnAction extends AbstractAction
@@ -196,59 +246,62 @@ public class GameView implements IGameView {
 		return label;
 	}
 
-	@Override
 	public void setCenterRowCard(int i, String name) 
 	{
-		centerRowPanel.setCenterRowCard(i, name);
+		centerRowPanel.setCard(i, name);
 	}
 
-	@Override
 	public void addToHand(String name) 
 	{
-		handPanel.addToHand(name);
+		handPanel.addCard(name);
 	}
 
-	@Override
 	public void clearHand() 
 	{
-		handPanel.clearHand();
+		handPanel.clearCards();
 	}
 
-	@Override
 	public void updateStatus(int runes, int power, int honor) 
 	{
 		statusPanel.updateStatus(runes, power, honor);
 	}
 
-	@Override
-	public void updateDeckCounts(int deckSize, int discardSize) 
+	public void updateDeckCounts(int playerDeckSize, int playerDiscardSize, int centerSize, int voidSize) 
 	{
-		playerDeckLabel.setText(String.valueOf(deckSize));
-		playerDiscardLabel.setText(String.valueOf(discardSize));
+		playerDeckPanel.setText(String.valueOf(playerDeckSize));
+		playerDiscardPanel.setText(String.valueOf(playerDiscardSize));
+		centerDeckPanel.setText(String.valueOf(centerSize));
+		centerDiscardPanel.setText(String.valueOf(voidSize));
 	}
 
-	@Override
 	public void addToPlayed(String name) 
 	{
-		playedPanel.addToCards(name);
+		playedPanel.addCard(name);
 	}
 
-	@Override
 	public void clearPlayed() 
 	{
 		playedPanel.clearCards();
 	}
 
-	@Override
 	public void refresh() 
 	{
-		//frame.revalidate();
+		frame.revalidate();
 		frame.repaint();
 	}
 
-	@Override
 	public void setPlayerName(String name) 
 	{
 		playerNameLabel.setText(name + "'s Turn");
+	}
+
+	public void clearConstructs() 
+	{
+		constructsPanel.clearCards();
+	}
+	
+	public void addToConstructs(String name)
+	{
+		constructsPanel.addCard(name);
 	}
 }

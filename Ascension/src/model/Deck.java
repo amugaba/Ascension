@@ -6,33 +6,51 @@ import java.util.List;
 
 import cards.Card;
 
-public class Deck 
+public class Deck extends LinkedList<Card>
 {
-	private LinkedList<Card> cards;
+	private static final long serialVersionUID = 1L;
+	private CardLocation location;
 
-	public Deck(LinkedList<Card> cardList) 
+	public Deck(CardLocation location) 
 	{
-		cards = cardList;
+		super();
+		this.location = location;
+	}
+	
+	public Deck(LinkedList<Card> cardList, CardLocation location) 
+	{
+		super(cardList);
+		this.location = location;
+		for(Card card : cardList)
+			card.location = location;
 	}
 
 	public void shuffle() 
 	{
-		Collections.shuffle(cards);
+		Collections.shuffle(this);
 	}
 
 	public Card deal() 
 	{
-		return cards.removeFirst();
+		return removeFirst();
 	}
 
-	public int size() 
+	public void addAll(List<Card> cards) 
 	{
-		return cards.size();
+		super.addAll(cards);
+		for(Card card : cards)
+			card.location = location;
 	}
 
-	public void addCards(List<Card> cards) 
+	public boolean add(Card card)
 	{
-		this.cards.addAll(cards);
+		card.location = location;
+		return super.add(card);
 	}
-
+	
+	public void addCardTop(Card card)
+	{
+		super.add(0, card);
+		card.location = location;
+	}
 }

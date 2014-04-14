@@ -8,16 +8,21 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 public final class ViewUtil 
 {
-	public static final int CARD_HEIGHT = 210;
-	public static final int CARD_WIDTH = 150;
-	public static final int CARD_HEIGHT_MED = 168;
-	public static final int CARD_WIDTH_MED = 120;
-	public static final int CARD_HEIGHT_SM = 126;
-	public static final int CARD_WIDTH_SM = 90;
+	public enum CardSize
+	{
+		SMALL, MEDIUM, LARGE;
+	}
+	private static final int CARD_HEIGHT_LRG = 210;
+	private static final int CARD_WIDTH_LRG = 150;
+	private static final int CARD_HEIGHT_MED = 168;
+	private static final int CARD_WIDTH_MED = 120;
+	private static final int CARD_HEIGHT_SM = 126;
+	private static final int CARD_WIDTH_SM = 90;
 	
 	private static Map<String,ImageIcon> cardImages;
 	private static Map<String,ImageIcon> cardImagesMed;
@@ -26,6 +31,26 @@ public final class ViewUtil
 	public static void init()
 	{
 		loadCardImages();
+	}
+	
+	public static int cardHeight(CardSize size)
+	{
+		if(size == CardSize.LARGE)
+			return CARD_HEIGHT_LRG;
+		else if(size == CardSize.MEDIUM)
+			return CARD_HEIGHT_MED;
+		else
+			return CARD_HEIGHT_SM;
+	}
+	
+	public static int cardWidth(CardSize size)
+	{
+		if(size == CardSize.LARGE)
+			return CARD_WIDTH_LRG;
+		else if(size == CardSize.MEDIUM)
+			return CARD_WIDTH_MED;
+		else
+			return CARD_WIDTH_SM;
 	}
 	
 	private static void loadCardImages() 
@@ -51,6 +76,8 @@ public final class ViewUtil
 		cardImages.put("Demon Slayer",new ImageIcon(GameView.class.getResource("/cards/images/Demon-Slayer.jpg")));
 		cardImages.put("Druids of the Stone Circle",new ImageIcon(GameView.class.getResource("/cards/images/Druids-of-the-Stone-Circle.jpg")));
 		
+		cardImages.put("Voidthirster",new ImageIcon(GameView.class.getResource("/cards/images/Voidthirster.jpg")));
+		
 		for(Entry<String, ImageIcon> pair : cardImages.entrySet())
 		{
 			cardImagesMed.put(pair.getKey(), new ImageIcon(pair.getValue().getImage().getScaledInstance(CARD_WIDTH_MED, CARD_HEIGHT_MED, Image.SCALE_SMOOTH)));
@@ -61,29 +88,32 @@ public final class ViewUtil
 		}
 	}
 
-	public static ImageIcon getImage(String name) 
+	public static ImageIcon getImage(String name, CardSize size) 
 	{
-		return cardImages.get(name);
+		if(size == CardSize.LARGE)
+			return cardImages.get(name);
+		else if(size == CardSize.MEDIUM)
+			return cardImagesMed.get(name);
+		else
+			return cardImagesSm.get(name);
 	}
 	
-	public static ImageIcon getImageMedium(String name) 
+	public enum Style
 	{
-		return cardImagesMed.get(name);
+		H1, H3
 	}
 	
-	public static ImageIcon getImageSmall(String name) 
+	public static void setStyle(JComponent label, Style style)
 	{
-		return cardImagesSm.get(name);
-	}
-	
-	public static void setStyle(JLabel label, String style)
-	{
-		switch(style)
+		if(style == Style.H1)
 		{
-		case "h1":	label.setForeground(Color.BLACK);
-					label.setFont(new Font("Copperplate Gothic Bold", Font.PLAIN, 48)); break;
-		case "h3":	label.setForeground(Color.BLACK);
-					label.setFont(new Font("Tahoma", Font.BOLD, 32)); break;
+			label.setForeground(Color.BLACK);
+			label.setFont(new Font("Copperplate Gothic Bold", Font.PLAIN, 48));
+		}
+		else if(style == Style.H3)
+		{
+			label.setForeground(Color.BLACK);
+			label.setFont(new Font("Tahoma", Font.BOLD, 32));
 		}
 	}
 }

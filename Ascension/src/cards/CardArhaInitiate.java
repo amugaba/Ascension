@@ -1,27 +1,24 @@
 package cards;
 
 import model.CardFaction;
-import model.CardLocation;
 import model.CardType;
 import model.GameModel;
 import model.ResourceType;
 
-public class CardHeavyInfantry extends Card 
-{
-	public CardHeavyInfantry()
+public class CardArhaInitiate extends Card {
+	public CardArhaInitiate() 
 	{
 		super();
-		name = "Heavy Infantry";
-		cost = 2;
+		name = "Arha Initiate";
+		cost = 1;
 		costType = ResourceType.RUNES;
 		honor = 1;
 		type = CardType.HERO;
-		faction = CardFaction.BASIC;
-		location = CardLocation.COMMON_CARDS;
+		faction = CardFaction.ENLIGHTENED;
 	}
-	
+
 	public void play(GameModel model)
 	{
-		model.addPower(2);
+		model.getActivePlayer().drawCard();
 	}
 }

@@ -4,17 +4,25 @@ import cards.Card;
 import cards.CardCultist;
 import cards.CardHeavyInfantry;
 import cards.CardMystic;
+import model.CardLocation;
+import model.GameException;
 import model.GameModel;
-import model.IGameModel;
+import model.GameState;
 import model.Player;
-import view.IGameView;
+import view.GameView;
 
 public class GameController 
 {
-	IGameView view;
-	IGameModel model;
+	GameView view;
+	GameModel model;
+	//when the model executes an action, sometimes it realizes that it has to pause and ask the player to do another action
+	//in those cases, it sets forceAction to true and sets an GameState enum
+	//the controller sess that when it refreshes the view after doing an action
+	//the controller disables/enables some stuff in the view and won't accept certain function calls
+	//until it reaches another refreshView where forceAction has been set by the model back to false
+	
 
-	public GameController(IGameView view, IGameModel model) 
+	public GameController(GameView view, GameModel model) 
 	{
 		this.view = view;
 		this.model = model;
@@ -29,19 +37,30 @@ public class GameController
 
 	public void clickCenterRow(int index)
 	{
-		//put center row card into player's discard pile
-		Card card = model.getCenterRowCard(index);
-		if(model.canAcquireDefeat(card))
+		Card card = model.getCenterRow().get(index);
+		//default action is to acquire/defeat card
+		if(model.getGameState() == GameState.NONE && model.canAcquireDefeat(card))
 		{
-			model.acquireDefeat(card, index);
-			refreshView();
+			model.acquireDefeat(card);
 		}
-		
+		if(model.getGameState() == GameState.SELECT_CARD_CENTER)
+		{
+			model.selectCard(card);
+		}
+		refreshView();
 	}
 	
 	public void clickHand(int index)
 	{
-		model.playCard(index);
+		Card card = model.getActivePlayer().getHandCard(index);
+		if(model.getGameState() == GameState.NONE)
+		{
+			model.playCard(card);
+		}
+		else if(model.getGameState() == GameState.SELECT_CARD_HAND)
+		{
+			model.selectCard(card);
+		}
 		refreshView();
 	}
 	
@@ -55,7 +74,7 @@ public class GameController
 		//Center row
 		for(int i = 0; i<GameModel.CENTER_ROW_SIZE; i++)
 		{
-			Card card = model.getCenterRowCard(i);
+			Card card = model.getCenterRow().get(i);
 			view.setCenterRowCard(i,card.name);
 		}
 		
@@ -63,14 +82,17 @@ public class GameController
 		view.clearHand();
 		for(Card card : player.getHand())
 		{
-			view.addToHand(card.name);
+			view.addToHand(card.name); //hand and played panel is disappearing when banishing a card
 		}
 		
 		//Status panel
 		view.updateStatus(model.getRunes(), model.getPower(), player.getHonor());
 		
 		//Deck counts
-		view.updateDeckCounts(player.deckSize(), player.getDiscard().size());
+		view.updateDeckCounts(model.getCards(CardLocation.PLAYER_DECK).size(), 
+				model.getCards(CardLocation.PLAYER_DISCARD).size(), 
+				model.getCards(CardLocation.CENTER_DECK).size(), 
+				model.getCards(CardLocation.CENTER_VOID).size());
 		
 		//Played cards
 		view.clearPlayed();
@@ -78,52 +100,82 @@ public class GameController
 		{
 			view.addToPlayed(card.name);
 		}
+		
+		//Constructs
+		view.clearConstructs();
+		for(Card card : model.getActivePlayer().getConstructs())
+		{
+			view.addToConstructs(card.name);
+		}
+		
 		view.refresh();
 	}
 
 	public void endTurn() 
 	{
-		model.endTurn();
-		model.startTurn();
+		if(model.getGameState() == GameState.NONE)
+		{
+			model.endTurn();
+			model.startTurn();
+		}
 		refreshView();
 	}
 
 	public void buyMystic() 
 	{
-		if(model.canAcquireDefeat(new CardMystic()))
+		if(model.getGameState() == GameState.NONE)
 		{
-			model.acquireMystic();
-			refreshView();
+			if(model.canAcquireDefeat(new CardMystic()))
+			{
+				model.acquireMystic();
+				refreshView();
+			}
 		}
 	}
 	
 	public void buyHeavyInfantry() 
 	{
-		if(model.canAcquireDefeat(new CardHeavyInfantry()))
+		if(model.getGameState() == GameState.NONE)
 		{
-			model.acquireHeavyInfantry();
-			refreshView();
+			if(model.canAcquireDefeat(new CardHeavyInfantry()))
+			{
+				model.acquireHeavyInfantry();
+				refreshView();
+			}
 		}
 	}
 	
 	public void defeatCultist() 
 	{
-		if(model.canAcquireDefeat(new CardCultist()))
+		if(model.getGameState() == GameState.NONE)
 		{
-			model.defeatCultist();
-			refreshView();
+			if(model.canAcquireDefeat(new CardCultist()))
+			{
+				model.defeatCultist();
+				refreshView();
+			}
 		}
 	}
 
 	public void clickPlayed(int index) 
 	{
-		// TODO Auto-generated method stub
-		
+		if(model.getGameState() == GameState.NONE)
+		{
+			// TODO Auto-generated method stub
+		}
 	}
 
 	public void clickConstruct(int index) 
 	{
-		// TODO Auto-generated method stub
-		
+		Card card = model.getActivePlayer().getConstructs().get(index);
+		if(model.getGameState() == GameState.NONE)
+		{
+			// TODO Auto-generated method stub
+		}
+		if(model.getGameState() == GameState.SELECT_CONSTRUCT)
+		{
+			model.selectCard(card);
+			refreshView();
+		}
 	}
 }

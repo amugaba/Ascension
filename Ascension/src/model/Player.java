@@ -7,38 +7,60 @@ import cards.Card;
 
 public class Player 
 {
+	private GameModel model;
 	private String name;
 	private Deck deck;
-	private List<Card> discardPile;
-	private List<Card> hand;
-	private List<Card> constructs;
+	private Deck discardPile;
+	private Deck hand;
+	private Deck constructs;
 	private int honor;
 	
-	public Player()
+	public Player(GameModel model, String name)
 	{
-		deck = new Deck(CardList.generatePlayerCards());
-		hand = new ArrayList<Card>();
-		discardPile = new ArrayList<Card>();
-		constructs = new ArrayList<Card>();
+		this.name = name;
+		this.model = model;
+		deck = new Deck(CardList.generatePlayerCards(), CardLocation.PLAYER_DECK);
+		for(Card card : deck)
+			card.owner = this;
+		hand = new Deck(CardLocation.PLAYER_HAND);
+		discardPile = new Deck(CardLocation.PLAYER_DISCARD);
+		constructs = new Deck(CardLocation.PLAYER_CONSTRUCTS);
 		honor = 0;
 		deck.shuffle();
 	}
 	
-	public void addToDiscard(Card card) 
+	public Card getHandCard(int index)
+	{
+		return hand.get(index);
+	}
+	
+	/*public void addToDiscard(Card card) 
 	{
 		discardPile.add(card);
-	}
+	}*/
 
-	public List<Card> getHand()
+	public Deck getDeck()
+	{
+		return deck;
+	}
+	public Deck getHand()
 	{
 		return hand;
 	}
-
+	public Deck getDiscard()
+	{
+		return discardPile;
+	}
+	public Deck getConstructs() 
+	{
+		return constructs;
+	}
+	
 	public void drawCard() 
 	{
 		if(deck.size() == 0)
 		{
-			deck.addCards(discardPile);
+			deck.addAll(discardPile);
 			discardPile.clear();
 			deck.shuffle();
 		}
@@ -47,31 +69,29 @@ public class Player
 			hand.add(deck.deal());
 		}
 	}
+	
+	/*public void banishHandCard(Card card)
+	{
+		if(hand.contains(card))
+		{
+			hand.remove(card);
+			model.addToVoid(card);
+		}
+	}*/
 
 	public int getHonor() 
 	{
 		return honor;
 	}
-
-	public int deckSize()
-	{
-		return deck.size();
-	}
 	
-	public List<Card> getDiscard()
-	{
-		return discardPile;
-	}
+	
 
 	public void addHonor(int i) 
 	{
 		honor += i;
 	}
 
-	public List<Card> getConstructs() 
-	{
-		return constructs;
-	}
+	
 
 	public String getName() 
 	{
@@ -82,5 +102,7 @@ public class Player
 	{
 		this.name = name;
 	}
+
+
 
 }

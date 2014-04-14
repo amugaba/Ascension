@@ -10,24 +10,31 @@ public class CardList
 	public static LinkedList<Card> generateChronicles()
 	{
 		LinkedList<Card> cards = new LinkedList<Card>();
-		cards.add(new CardMystic());
-		cards.add(new CardMystic());
-		cards.add(new CardMystic());
-		cards.add(new CardHeavyInfantry());
-		cards.add(new CardHeavyInfantry());
-		cards.add(new CardHeavyInfantry());
 		cards.add(new CardAvatarGolem());
 		cards.add(new CardAvatarGolem());
 		cards.add(new CardAvatarGolem());
-		cards.add(new CardMystic());
-		cards.add(new CardMystic());
-		cards.add(new CardMystic());
-		cards.add(new CardHeavyInfantry());
-		cards.add(new CardHeavyInfantry());
-		cards.add(new CardHeavyInfantry());
 		cards.add(new CardCorrosiveWidow());
 		cards.add(new CardCorrosiveWidow());
 		cards.add(new CardCorrosiveWidow());
+		cards.add(new CardCorrosiveWidow());
+		cards.add(new CardCorrosiveWidow());
+		cards.add(new CardCorrosiveWidow());
+		cards.add(new CardArhaTemplar());
+		cards.add(new CardArhaTemplar());
+		cards.add(new CardArhaTemplar());
+		cards.add(new CardArhaTemplar());
+		cards.add(new CardArhaTemplar());
+		cards.add(new CardArhaTemplar());
+		cards.add(new CardArhaTemplar());
+		cards.add(new CardBurrowerMarkII());
+		cards.add(new CardBurrowerMarkII());
+		cards.add(new CardBurrowerMarkII());
+		cards.add(new CardBurrowerMarkII());
+		cards.add(new CardBurrowerMarkII());
+		cards.add(new CardBurrowerMarkII());
+		cards.add(new CardBurrowerMarkII());
+		cards.add(new CardBurrowerMarkII());
+		cards.add(new CardBurrowerMarkII());
 		return cards;
 	}
 	
