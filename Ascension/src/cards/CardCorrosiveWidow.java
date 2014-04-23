@@ -37,10 +37,11 @@ public class CardCorrosiveWidow extends Card
 	@Override
 	public void update(GameModel model, GameAction trigger, Object arg) 
 	{	
-		if(trigger == GameAction.SELECT_CONSTRUCT)
+		if(trigger == GameAction.SELECT_CONSTRUCT && arg instanceof Card)
 		{
+			Card card = (Card) arg;
 			model.removeState(GameState.SELECT_CONSTRUCT);
-			model.destroyConstruct((Card)arg);
+			model.destroyConstruct(card);
 			model.removeObserver(this);
 			model.switchPlayer();
 		}

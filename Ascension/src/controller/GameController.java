@@ -43,7 +43,7 @@ public class GameController
 		{
 			model.acquireDefeat(card);
 		}
-		if(model.getGameState() == GameState.SELECT_CARD_CENTER || model.getGameState() == GameState.SELECT_CENTER_OR_COMMON)
+		if(model.getGameState() == GameState.SELECT_CENTER || model.getGameState() == GameState.SELECT_CENTER_OR_COMMON)
 		{
 			model.selectCard(card);
 		}
@@ -57,7 +57,7 @@ public class GameController
 		{
 			model.playCard(card);
 		}
-		else if(model.getGameState() == GameState.SELECT_CARD_HAND)
+		else if(model.getGameState() == GameState.SELECT_HAND)
 		{
 			model.selectCard(card);
 		}
@@ -154,6 +154,15 @@ public class GameController
 		{
 			model.endTurn();
 			model.startTurn();
+		}
+		refreshView();
+	}
+
+	public void clickOption(int i) 
+	{
+		if(model.getGameState() == GameState.SELECT_OPTION)
+		{
+			model.selectOption(i);
 		}
 		refreshView();
 	}

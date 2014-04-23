@@ -404,7 +404,9 @@ public class GameModel
 						   commonCards.remove(card);
 			try {
 				commonCards.add(index, card.getClass().newInstance());//replace card with a copy of it
-			} catch (InstantiationException | IllegalAccessException e) {
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}break; 
 		default: throw new IllegalArgumentException("Unimplemented: Moving from " + prevLoc.toString());
@@ -476,5 +478,10 @@ public class GameModel
 		Construct construct = (Construct) card;
 		if(construct.active)
 			construct.use(this);
+	}
+
+	public void selectOption(int i) 
+	{
+		notifyObservers(GameAction.SELECT_OPTION, 1);
 	}
 }

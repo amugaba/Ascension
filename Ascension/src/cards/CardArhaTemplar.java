@@ -37,7 +37,7 @@ public class CardArhaTemplar extends Card {
 			if(card.type == CardType.MONSTER && card.cost <= 4)
 			{
 				model.acquireDefeatFree(card);
-				model.removeState(GameState.SELECT_CARD_CENTER);
+				model.removeState(GameState.SELECT_CENTER);
 				model.removeState(GameState.SELECT_CENTER_OR_COMMON);
 				model.removeObserver(this);
 			}

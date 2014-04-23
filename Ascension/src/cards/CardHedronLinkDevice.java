@@ -4,7 +4,7 @@ import model.CardFaction;
 import model.CardType;
 import model.ResourceType;
 
-public class CardHedronLinkDevice extends Card {
+public class CardHedronLinkDevice extends Construct {
 
 	public CardHedronLinkDevice() {
 		super();

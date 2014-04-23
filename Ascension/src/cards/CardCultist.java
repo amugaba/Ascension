@@ -14,7 +14,7 @@ public class CardCultist extends Card
 		name = "Cultist";
 		cost = 2;
 		costType = ResourceType.POWER;
-		honor = 0;
+		honor = 1;
 		type = CardType.MONSTER;
 		faction = CardFaction.BASIC;
 		location = CardLocation.COMMON_CARDS;
@@ -22,6 +22,6 @@ public class CardCultist extends Card
 	
 	public void onDefeat(GameModel model)
 	{
-		model.addHonor(1);
+		model.addHonor(honor);
 	}
 }

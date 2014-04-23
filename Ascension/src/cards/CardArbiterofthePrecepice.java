@@ -26,7 +26,7 @@ public class CardArbiterofthePrecepice extends Card {
 		model.getActivePlayer().drawCard();
 		model.getActivePlayer().drawCard();
 		
-		model.addState(GameState.SELECT_CARD_HAND);
+		model.addState(GameState.SELECT_HAND);
 		model.addObserver(this);
 	}
 	
@@ -36,9 +36,8 @@ public class CardArbiterofthePrecepice extends Card {
 		if(trigger == GameAction.SELECT_HAND && arg instanceof Card)
 		{
 			Card card = (Card) arg;
-			//model.banishPlayerCard(card);
+			model.removeState(GameState.SELECT_HAND);
 			model.moveCard(card, CardLocation.CENTER_VOID);
-			model.removeState(GameState.SELECT_CARD_HAND);
 			model.removeObserver(this);
 		}
 	}

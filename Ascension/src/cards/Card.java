@@ -54,4 +54,9 @@ public class Card implements GameObserver
 	{
 		return EnumSet.of(faction);
 	}
+	
+	public boolean isBanishable()
+	{
+		return true;
+	}
 }

@@ -34,7 +34,7 @@ public class CardDruidsoftheStoneCircle extends Card {
 			Card card = (Card) arg;
 			if(card.type == CardType.HERO && card.cost <= 3)
 			{
-				model.removeState(GameState.SELECT_CARD_CENTER);
+				model.removeState(GameState.SELECT_CENTER);
 				model.removeState(GameState.SELECT_CENTER_OR_COMMON);
 				model.acquireTopDeck(card);
 				model.removeObserver(this);

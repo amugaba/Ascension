@@ -32,10 +32,15 @@ public class CardAvataroftheFallen extends Card {
 		if((trigger == GameAction.SELECT_CENTER || trigger == GameAction.SELECT_COMMON) && arg instanceof Card)
 		{
 			Card card = (Card) arg;
-			model.removeState(GameState.SELECT_CARD_CENTER);
+			model.removeState(GameState.SELECT_CENTER);
 			model.removeState(GameState.SELECT_CENTER_OR_COMMON);
 			model.acquireDefeatFree(card);
 			model.removeObserver(this);
 		}
+	}
+	
+	public boolean isBanishable()
+	{
+		return false;
 	}
 }
