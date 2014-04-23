@@ -1,29 +1,28 @@
 package cards;
 
 import model.CardFaction;
-import model.CardLocation;
 import model.CardType;
 import model.GameModel;
 import model.GameState;
 import model.Player;
 import model.ResourceType;
 
-public class CardFanatic extends Card {
+public class CardEarthTyrant extends Card {
 
-	public CardFanatic() 
-	{
+	public CardEarthTyrant() {
 		super();
-		name = "Fanatic";
-		cost = 2;
+		name = "Earth Tyrant";
+		cost = 6;
 		costType = ResourceType.POWER;
-		honor = 0;
+		honor = 5;
 		type = CardType.MONSTER;
 		faction = CardFaction.MONSTER;
-		location = CardLocation.COMMON_CARDS;
 	}
 	
 	public void onDefeat(GameModel model)
 	{
-		model.addHonor(1);
+		model.addHonor(honor);
+		model.getActivePlayer().drawCard();
+		model.getActivePlayer().drawCard();
 	}
 }

@@ -41,12 +41,7 @@ public class CommonCardsPanel extends CardPanel
 		public void actionPerformed(ActionEvent e)
 		{
 			int index = ((CardButton)e.getSource()).index;
-			if(index == 0)
-				controller.buyMystic();
-			else if(index == 1)
-				controller.buyHeavyInfantry();
-			else
-				controller.defeatCultist();
+			controller.clickCommon(index);
 		}
 	}
 

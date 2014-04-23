@@ -1,12 +1,9 @@
 package cards;
 
-import java.util.EnumSet;
-
 import model.CardFaction;
 import model.CardLocation;
 import model.CardType;
 import model.GameAction;
-import model.GameException;
 import model.GameModel;
 import model.ResourceType;
 import model.GameState;

@@ -1,6 +1,7 @@
 package cards;
 
 import model.CardFaction;
+import model.CardLocation;
 import model.CardType;
 import model.GameModel;
 import model.ResourceType;
@@ -15,7 +16,8 @@ public class CardCultist extends Card
 		costType = ResourceType.POWER;
 		honor = 0;
 		type = CardType.MONSTER;
-		faction = CardFaction.MONSTER;
+		faction = CardFaction.BASIC;
+		location = CardLocation.COMMON_CARDS;
 	}
 	
 	public void onDefeat(GameModel model)

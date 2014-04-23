@@ -48,6 +48,12 @@ public class Deck extends LinkedList<Card>
 		return super.add(card);
 	}
 	
+	public void add(int index, Card card)
+	{
+		card.location = location;
+		super.add(index, card);
+	}
+	
 	public void addCardTop(Card card)
 	{
 		super.add(0, card);

@@ -22,10 +22,12 @@ public class Card implements GameObserver
 	public ResourceType costType;
 	public int honor;
 	public CardType type;
-	public CardFaction faction;
+	protected CardFaction faction;
 	public ReplaceRule rule;
 	public CardLocation	location;
 	public Player owner = null;
+	
+	public static GameModel model;
 	
 	public Card()	{	}
 	
@@ -47,4 +49,9 @@ public class Card implements GameObserver
 
 	@Override
 	public void update(GameModel model, GameAction trigger, Object arg) {	}
+	
+	public EnumSet<CardFaction> getFactions()
+	{
+		return EnumSet.of(faction);
+	}
 }

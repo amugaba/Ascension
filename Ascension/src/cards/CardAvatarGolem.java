@@ -1,6 +1,7 @@
 package cards;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import model.CardFaction;
@@ -24,12 +25,11 @@ public class CardAvatarGolem extends Card
 	public void play(GameModel model)
 	{
 		model.addPower(2);
-		List<Card> constructs = model.getActivePlayer().getConstructs();
-		List<CardFaction> factions = new ArrayList<CardFaction>();
-		for(Card construct : constructs)
+
+		EnumSet<CardFaction> factions = EnumSet.noneOf(CardFaction.class);
+		for(Card construct : model.getActivePlayer().getConstructs())
 		{
-			if(!factions.contains(construct.faction))
-				factions.add(construct.faction);
+			factions.addAll(construct.getFactions());
 		}
 		model.addHonor(factions.size());
 	}

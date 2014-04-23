@@ -1,10 +1,14 @@
 package cards;
 
+import java.util.EnumSet;
+
+import model.CardFaction;
+import model.GameAction;
 import model.GameModel;
 
 public class Construct extends Card 
 {	
-	boolean active = true; //whether the construct's ability is useable
+	public boolean active = true; //whether the construct's ability is useable
 	public Construct()
 	{
 		super();
@@ -21,7 +25,25 @@ public class Construct extends Card
 		model.removeObserver(this);
 	}
 	
-	public void useConstruct(GameModel gameModel)
+	@Override
+	public void update(GameModel model, GameAction trigger, Object arg) 
+	{	
+		if(trigger == GameAction.TURN_START)
+		{
+			active = true;
+		}
+	}
+	
+	public void use(GameModel gameModel)
 	{
+	}
+	
+	public EnumSet<CardFaction> getFactions()
+	{
+		for(Card c : model.getActivePlayer().getConstructs())
+			if(c.name.equals("Hedron Link Device"))
+				return EnumSet.of(faction, CardFaction.MECHANA);
+		
+		return EnumSet.of(faction);
 	}
 }

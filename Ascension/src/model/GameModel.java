@@ -15,6 +15,7 @@ public class GameModel
 	private DeckArray centerRow;
 	private Deck voidDeck;
 	private Deck playedCards;
+	private Deck commonCards;
 	
 	public static final int CENTER_ROW_SIZE = 6;
 	private static final int NUM_PLAYERS = 2;
@@ -22,6 +23,10 @@ public class GameModel
 	
 	private int runesAvailable = 0;
 	private int powerAvailable = 0;
+	
+	private int honorPool;
+	private static final int HONOR_PER_PLAYER = 30;
+	private boolean gameEnding = false;
 	
 	private boolean directAcquire = false;
 	private List<CardType> directAcquireTypes;
@@ -34,9 +39,12 @@ public class GameModel
 	private List<ReplaceRule> replaceRules;
 	private List<GameObserver> observers = new ArrayList<GameObserver>();
 	
+	private Player winner;
+	
 	
 	public GameModel()
 	{
+		Card.model = this;
 		centerDeck = new Deck(CardList.generateChronicles(), CardLocation.CENTER_DECK);
 		centerDeck.shuffle();
 		
@@ -48,9 +56,11 @@ public class GameModel
 		{
 			players[i] = new Player(this, "Player " + String.valueOf(i+1));
 		}
+		honorPool = HONOR_PER_PLAYER * NUM_PLAYERS;
 		
 		voidDeck = new Deck(CardLocation.CENTER_VOID);
 		playedCards = new Deck(CardLocation.PLAYED_CARDS);
+		commonCards = new Deck(CardList.generateCommonCards(), CardLocation.COMMON_CARDS);
 		replaceRules = new ArrayList<ReplaceRule>();
 	}
 
@@ -82,6 +92,12 @@ public class GameModel
 	public void addHonor(int i) 
 	{
 		players[activePlayerIndex].addHonor(i);
+		honorPool -= i;
+		if(honorPool < 0)
+		{
+			honorPool = 0;
+			gameEnding = true;
+		}
 	}
 	
 	public DeckArray getCenterRow()
@@ -129,10 +145,6 @@ public class GameModel
 	{
 		card.onAcquire(this);
 		moveCard(card, CardLocation.PLAYER_DECK);
-		//getActivePlayer().getDeck().addCardTop(card);
-		//int index = Arrays.asList(centerRow).indexOf(card);
-		//centerRow[index] = null;
-		//fillCenterRow();
 	}
 
 	private void payFor(Card card) 
@@ -161,12 +173,50 @@ public class GameModel
 		
 		moveAll(CardLocation.PLAYED_CARDS, CardLocation.PLAYER_DISCARD);
 		moveAll(CardLocation.PLAYER_HAND, CardLocation.PLAYER_DISCARD);
-		//playedCards.clear();
-		//player.getHand().clear();
+		
+		//if the game is ending and the current player is the last player in the turn order
+		if(gameEnding && activePlayerIndex == NUM_PLAYERS-1)
+		{
+			endGame();
+		}
+
 		activePlayerIndex++;
 		activePlayerIndex %= players.length;
 		runesAvailable = 0;
 		powerAvailable = 0;
+	}
+	
+	private void endGame()
+	{
+		addState(GameState.GAME_OVER);
+		
+		//add up player honor to determine winner
+		int maxHonor = 0;
+		Player playerMaxHonor = null;
+		for(int i=0; i < NUM_PLAYERS; i++)
+		{
+			Player p = players[i];
+			int totalHonor = p.getHonor();
+			for(Card card : p.getConstructs())
+				totalHonor += card.honor;
+			for(Card card : p.getDeck())
+				totalHonor += card.honor;
+			for(Card card : p.getDiscard())
+				totalHonor += card.honor;
+			p.addHonor(totalHonor - p.getHonor()); //set their honor as the final total
+			
+			if(totalHonor >= maxHonor) //later players win ties
+			{
+				maxHonor = totalHonor;
+				playerMaxHonor = p;
+			}
+			winner = playerMaxHonor;
+		}
+	}
+	
+	public Player getWinner()
+	{
+		return winner;
 	}
 	
 	public Player getNextPlayer()
@@ -197,12 +247,11 @@ public class GameModel
 	
 	public void playCard(Card card)
 	{
-		//getActivePlayer().getHand().remove(card);
 		card.play(this);
 		if(card.type == CardType.CONSTRUCT)
 		{
 			moveCard(card, CardLocation.PLAYER_CONSTRUCTS);
-			if(card.faction == CardFaction.MECHANA)
+			if(card.getFactions().contains(CardFaction.MECHANA))
 				notifyObservers(GameAction.PLAY_MECHANA_CONSTRUCT, card);
 		}
 		else
@@ -214,51 +263,18 @@ public class GameModel
 	{
 		return runesAvailable;
 	}
-
-	
 	public int getPower() 
 	{
 		return powerAvailable;
 	}
-
-	
+	public int getHonorPool()
+	{
+		return honorPool;
+	}
 	public Deck getPlayedCards() 
 	{
 		return playedCards;
 	}
-	
-	
-	public void acquireMystic() 
-	{
-		Card card = new CardMystic();
-		card.location = CardLocation.COMMON_CARDS;
-		payFor(card);
-		moveCard(card, CardLocation.PLAYER_DISCARD);
-		//getActivePlayer().addToDiscard(card);
-	}
-
-	
-	public void acquireHeavyInfantry() 
-	{
-		Card card = new CardHeavyInfantry();
-		card.location = CardLocation.COMMON_CARDS;
-		payFor(card);
-		moveCard(card, CardLocation.PLAYER_DISCARD);
-		//getActivePlayer().addToDiscard(card);
-	}
-	
-	
-	public void defeatCultist() 
-	{
-		Card card = new CardCultist();
-		payFor(card);
-		card.onDefeat(this);
-	}
-	
-	/*public void banishPlayerCard(Card card)
-	{
-		getActivePlayer().banishHandCard(card);
-	}*/
 	
 	public GameState getGameState()
 	{
@@ -273,7 +289,7 @@ public class GameModel
 	{
 		if(getGameState() == GameState.NONE)
 		{
-			
+			//TBD
 		}
 	}
 
@@ -342,6 +358,10 @@ public class GameModel
 		{
 			notifyObservers(GameAction.SELECT_CONSTRUCT, card);
 		}
+		else if(getCards(CardLocation.COMMON_CARDS).contains(card))
+		{
+			notifyObservers(GameAction.SELECT_COMMON, card);
+		}
 	}
 	
 	public Card getHandCard(int index)
@@ -359,10 +379,8 @@ public class GameModel
 	{
 		if(getCards(CardLocation.PLAYER_CONSTRUCTS).contains(card))
 		{
-			//getActivePlayer().getConstructs().remove(card);
 			((Construct) card).onDestroy(this);
 			moveCard(card, CardLocation.PLAYER_DISCARD);
-			//getActivePlayer().addToDiscard(card);
 		}
 	}
 
@@ -382,7 +400,13 @@ public class GameModel
 		case PLAYER_CONSTRUCTS: card.owner.getConstructs().remove(card); break;
 		case PLAYED_CARDS: playedCards.remove(card); break;
 		case CENTER_ROW: centerRow.remove(card); fillCenterRow(); break;
-		case COMMON_CARDS: break; //do nothing
+		case COMMON_CARDS: int index = commonCards.indexOf(card);
+						   commonCards.remove(card);
+			try {
+				commonCards.add(index, card.getClass().newInstance());//replace card with a copy of it
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+			}break; 
 		default: throw new IllegalArgumentException("Unimplemented: Moving from " + prevLoc.toString());
 		}
 		
@@ -407,7 +431,7 @@ public class GameModel
 		case PLAYER_CONSTRUCTS: card.owner.getConstructs().add(card); break;
 		case PLAYED_CARDS: playedCards.add(card); break;
 		case CENTER_DECK: centerDeck.add(card); break;
-		case CENTER_VOID: voidDeck.add(card); break;
+		case CENTER_VOID: if(card.getFactions().contains(CardFaction.BASIC)) voidDeck.add(card); break;
 		default: throw new IllegalArgumentException("Unimplemented: Moving to " + newLocation.toString());
 		}
 		card.location = newLocation;
@@ -437,7 +461,20 @@ public class GameModel
 		case CENTER_ROW: return centerRow.getCards();
 		case CENTER_DECK: return centerDeck;
 		case CENTER_VOID: return voidDeck;
+		case COMMON_CARDS: return commonCards;
 		default: throw new IllegalArgumentException("Unimplemented: Get cards from " + location.toString());
 		}
+	}
+
+	public Deck getCommonCards() 
+	{
+		return commonCards;
+	}
+
+	public void useConstruct(Card card) 
+	{
+		Construct construct = (Construct) card;
+		if(construct.active)
+			construct.use(this);
 	}
 }

@@ -7,21 +7,21 @@ import model.GameModel;
 import model.GameState;
 import model.ResourceType;
 
-public class CardCetraWeaverofStars extends Card {
+public class CardAvataroftheFallen extends Card {
 
-	public CardCetraWeaverofStars() {
+	public CardAvataroftheFallen() {
 		super();
-		name = "Cetra, Weaver of Stars";
+		name = "Avatar of the Fallen";
 		cost = 7;
-		costType = ResourceType.RUNES;
-		honor = 4;
-		type = CardType.HERO;
-		faction = CardFaction.LIFEBOUND;
+		costType = ResourceType.POWER;
+		honor = 5;
+		type = CardType.MONSTER;
+		faction = CardFaction.MONSTER;
 	}
-
-	@Override
-	public void play(GameModel model)
+	
+	public void onDefeat(GameModel model)
 	{
+		model.addHonor(honor);
 		model.addState(GameState.SELECT_CENTER_OR_COMMON);
 		model.addObserver(this);
 	}
@@ -32,13 +32,10 @@ public class CardCetraWeaverofStars extends Card {
 		if((trigger == GameAction.SELECT_CENTER || trigger == GameAction.SELECT_COMMON) && arg instanceof Card)
 		{
 			Card card = (Card) arg;
-			if(card.type == CardType.HERO)
-			{
-				model.removeState(GameState.SELECT_CARD_CENTER);
-				model.removeState(GameState.SELECT_CENTER_OR_COMMON);
-				model.acquireTopDeck(card);
-				model.removeObserver(this);
-			}
+			model.removeState(GameState.SELECT_CARD_CENTER);
+			model.removeState(GameState.SELECT_CENTER_OR_COMMON);
+			model.acquireDefeatFree(card);
+			model.removeObserver(this);
 		}
 	}
 }

@@ -43,7 +43,7 @@ public class GameController
 		{
 			model.acquireDefeat(card);
 		}
-		if(model.getGameState() == GameState.SELECT_CARD_CENTER)
+		if(model.getGameState() == GameState.SELECT_CARD_CENTER || model.getGameState() == GameState.SELECT_CENTER_OR_COMMON)
 		{
 			model.selectCard(card);
 		}
@@ -60,6 +60,43 @@ public class GameController
 		else if(model.getGameState() == GameState.SELECT_CARD_HAND)
 		{
 			model.selectCard(card);
+		}
+		refreshView();
+	}
+	
+	public void clickCommon(int index)
+	{
+		Card card = model.getCommonCards().get(index);
+		if(model.getGameState() == GameState.NONE && model.canAcquireDefeat(card))
+		{
+			model.acquireDefeat(card);
+		}
+		else if(model.getGameState() == GameState.SELECT_CENTER_OR_COMMON)
+		{
+			model.selectCard(card);
+		}
+		refreshView();
+	}
+
+	public void clickConstruct(int index) 
+	{
+		Card card = model.getActivePlayer().getConstructs().get(index);
+		if(model.getGameState() == GameState.NONE)
+		{
+			model.useConstruct(card);
+		}
+		if(model.getGameState() == GameState.SELECT_CONSTRUCT)
+		{
+			model.selectCard(card);
+		}
+		refreshView();
+	}
+	
+	public void clickPlayed(int index) 
+	{
+		if(model.getGameState() == GameState.NONE)
+		{
+			// TODO Auto-generated method stub
 		}
 		refreshView();
 	}
@@ -119,63 +156,5 @@ public class GameController
 			model.startTurn();
 		}
 		refreshView();
-	}
-
-	public void buyMystic() 
-	{
-		if(model.getGameState() == GameState.NONE)
-		{
-			if(model.canAcquireDefeat(new CardMystic()))
-			{
-				model.acquireMystic();
-				refreshView();
-			}
-		}
-	}
-	
-	public void buyHeavyInfantry() 
-	{
-		if(model.getGameState() == GameState.NONE)
-		{
-			if(model.canAcquireDefeat(new CardHeavyInfantry()))
-			{
-				model.acquireHeavyInfantry();
-				refreshView();
-			}
-		}
-	}
-	
-	public void defeatCultist() 
-	{
-		if(model.getGameState() == GameState.NONE)
-		{
-			if(model.canAcquireDefeat(new CardCultist()))
-			{
-				model.defeatCultist();
-				refreshView();
-			}
-		}
-	}
-
-	public void clickPlayed(int index) 
-	{
-		if(model.getGameState() == GameState.NONE)
-		{
-			// TODO Auto-generated method stub
-		}
-	}
-
-	public void clickConstruct(int index) 
-	{
-		Card card = model.getActivePlayer().getConstructs().get(index);
-		if(model.getGameState() == GameState.NONE)
-		{
-			// TODO Auto-generated method stub
-		}
-		if(model.getGameState() == GameState.SELECT_CONSTRUCT)
-		{
-			model.selectCard(card);
-			refreshView();
-		}
 	}
 }

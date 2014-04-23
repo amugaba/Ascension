@@ -16,14 +16,14 @@ public class CardCorrosiveWidow extends Card
 		name = "Corrosive Widow";
 		cost = 4;
 		costType = ResourceType.POWER;
-		honor = 0;
+		honor = 3;
 		type = CardType.MONSTER;
 		faction = CardFaction.MONSTER;
 	}
 	
 	public void onDefeat(GameModel model)
 	{
-		model.addHonor(3);
+		model.addHonor(honor);
 		//show other player's board, require that person to select a construct
 		Player player = model.getNextPlayer();
 		if(player.getConstructs().size() > 0)
@@ -39,8 +39,8 @@ public class CardCorrosiveWidow extends Card
 	{	
 		if(trigger == GameAction.SELECT_CONSTRUCT)
 		{
-			model.destroyConstruct((Card)arg);
 			model.removeState(GameState.SELECT_CONSTRUCT);
+			model.destroyConstruct((Card)arg);
 			model.removeObserver(this);
 			model.switchPlayer();
 		}

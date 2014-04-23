@@ -187,7 +187,7 @@ public class GameView
 				new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						controller.defeatCultist();						
+						// TBD						
 					}	}	);
 		frame.getLayeredPane().add(playerDeckPanel, new Integer(1));
 		
@@ -195,7 +195,7 @@ public class GameView
 				new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						controller.defeatCultist();						
+						// TBD						
 					}	}	);
 		frame.getLayeredPane().add(playerDiscardPanel, new Integer(1));
 		
@@ -203,7 +203,7 @@ public class GameView
 				new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						controller.defeatCultist();						
+						// TBD							
 					}	}	);
 		frame.getLayeredPane().add(centerDeckPanel, new Integer(1));
 		
@@ -211,7 +211,7 @@ public class GameView
 				new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						controller.defeatCultist();						
+						// TBD						
 					}	}	);
 		frame.getLayeredPane().add(centerDiscardPanel, new Integer(1));
 	}

@@ -19,19 +19,11 @@ public class CardBurrowerMarkII extends Construct {
 	}
 	
 	@Override
-	public void play(GameModel model)
-	{
-		super.play(model);
-	}
-	
-	@Override
 	public void update(GameModel model, GameAction trigger, Object arg) 
 	{	
-		if(trigger == GameAction.TURN_START)
-		{
-			active = true;
-		}
-		else if(trigger == GameAction.PLAY_MECHANA_CONSTRUCT && active)
+		super.update(model, trigger, arg);
+		
+		if(trigger == GameAction.PLAY_MECHANA_CONSTRUCT && active)
 		{
 			model.getActivePlayer().drawCard();
 			active = false;

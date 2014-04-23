@@ -75,6 +75,17 @@ public final class ViewUtil
 		cardImages.put("Corrosive Widow",new ImageIcon(GameView.class.getResource("/cards/images/Corrosive-Widow.jpg")));
 		cardImages.put("Demon Slayer",new ImageIcon(GameView.class.getResource("/cards/images/Demon-Slayer.jpg")));
 		cardImages.put("Druids of the Stone Circle",new ImageIcon(GameView.class.getResource("/cards/images/Druids-of-the-Stone-Circle.jpg")));
+		cardImages.put("Earth Tyrant",new ImageIcon(GameView.class.getResource("/cards/images/Earth-Tyrant.jpg")));
+		cardImages.put("Emri, One with the Void",new ImageIcon(GameView.class.getResource("/cards/images/Emri-One-with-the-Void.jpg")));
+		cardImages.put("Avatar of the Fallen",new ImageIcon(GameView.class.getResource("/cards/images/Avatar-of-the-Fallen.jpg")));
+		cardImages.put("Flytrap Witch",new ImageIcon(GameView.class.getResource("/cards/images/Flytrap-Witch.jpg")));
+		cardImages.put("Hedron Cannon",new ImageIcon(GameView.class.getResource("/cards/images/Hedron-Cannon.jpg")));
+		cardImages.put("Hedron Link Device",new ImageIcon(GameView.class.getResource("/cards/images/Hedron-Link-Device.jpg")));
+		cardImages.put("Kor, the Ferromancer",new ImageIcon(GameView.class.getResource("/cards/images/Kor-the-Ferromancer.jpg")));
+		cardImages.put("Landtalker",new ImageIcon(GameView.class.getResource("/cards/images/Landtalker.jpg")));
+		cardImages.put("Lifebound Initiate",new ImageIcon(GameView.class.getResource("/cards/images/Lifebound-Initiate.jpg")));
+		cardImages.put("Master Dhartha",new ImageIcon(GameView.class.getResource("/cards/images/Master-Dhartha.jpg")));
+		//cardImages.put("",new ImageIcon(GameView.class.getResource("/cards/images/.jpg")));
 		
 		cardImages.put("Voidthirster",new ImageIcon(GameView.class.getResource("/cards/images/Voidthirster.jpg")));
 		
