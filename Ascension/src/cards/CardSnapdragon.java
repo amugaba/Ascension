@@ -1,30 +1,27 @@
 package cards;
 
-import java.util.EnumSet;
-
 import model.CardFaction;
 import model.CardType;
 import model.GameAction;
 import model.GameModel;
 import model.ResourceType;
 
-public class CardVoidthirster extends Construct {
-
-	public CardVoidthirster() {
+public class CardSnapdragon extends Construct {
+	public CardSnapdragon() {
 		super();
-		name = "Voidthirster";
+		name = "Snapdragon";
 		cost = 5;
 		costType = ResourceType.RUNES;
-		honor = 3;
+		honor = 2;
 		type = CardType.CONSTRUCT;
-		faction = CardFaction.VOID;
+		faction = CardFaction.LIFEBOUND;
 	}
 	
 	@Override
 	public void play(GameModel model)
 	{
 		super.play(model);
-		model.addPower(1);
+		model.addRunes(1);
 	}
 	
 	@Override
@@ -34,12 +31,16 @@ public class CardVoidthirster extends Construct {
 		
 		if(trigger == GameAction.TURN_START)
 		{
-			model.addPower(1);
+			model.addRunes(1);
 		}
-		else if(trigger == GameAction.DEFEAT_CENTER && active)
+		else if(trigger == GameAction.PLAY_HERO && active && arg instanceof Card)
 		{
-			model.addHonor(1);
-			active = false;
+			Card card = (Card) arg;
+			if(card.getFactions().contains(CardFaction.LIFEBOUND))
+			{
+				model.addHonor(1);
+				active = false;
+			}
 		}
 	}
 }

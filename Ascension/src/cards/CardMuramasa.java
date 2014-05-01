@@ -1,21 +1,19 @@
 package cards;
 
-import java.util.EnumSet;
-
 import model.CardFaction;
 import model.CardType;
 import model.GameAction;
 import model.GameModel;
 import model.ResourceType;
 
-public class CardVoidthirster extends Construct {
-
-	public CardVoidthirster() {
+public class CardMuramasa extends Construct {
+	
+	public CardMuramasa() {
 		super();
-		name = "Voidthirster";
-		cost = 5;
+		name = "Muramasa";
+		cost = 7;
 		costType = ResourceType.RUNES;
-		honor = 3;
+		honor = 4;
 		type = CardType.CONSTRUCT;
 		faction = CardFaction.VOID;
 	}
@@ -24,7 +22,7 @@ public class CardVoidthirster extends Construct {
 	public void play(GameModel model)
 	{
 		super.play(model);
-		model.addPower(1);
+		model.addPower(3);
 	}
 	
 	@Override
@@ -34,12 +32,7 @@ public class CardVoidthirster extends Construct {
 		
 		if(trigger == GameAction.TURN_START)
 		{
-			model.addPower(1);
-		}
-		else if(trigger == GameAction.DEFEAT_CENTER && active)
-		{
-			model.addHonor(1);
-			active = false;
+			model.addPower(3);
 		}
 	}
 }

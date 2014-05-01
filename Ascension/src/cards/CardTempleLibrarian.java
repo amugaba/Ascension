@@ -5,29 +5,29 @@ import model.CardLocation;
 import model.CardType;
 import model.GameAction;
 import model.GameModel;
-import model.ResourceType;
 import model.GameState;
+import model.ResourceType;
 
-public class CardArbiterofthePrecepice extends Card {
-
-	public CardArbiterofthePrecepice() 
+public class CardTempleLibrarian extends Card {
+	public CardTempleLibrarian() 
 	{
 		super();
-		name = "Arbiter of the Precipice";
-		cost = 4;
+		name = "Temple Librarian";
+		cost = 2;
 		costType = ResourceType.RUNES;
 		honor = 1;
 		type = CardType.HERO;
-		faction = CardFaction.VOID;
+		faction = CardFaction.ENLIGHTENED;
 	}
 
 	public void play(GameModel model)
 	{
-		model.getActivePlayer().drawCard();
-		model.getActivePlayer().drawCard();
-		
-		model.addState(GameState.SELECT_HAND);
-		model.addObserver(this);
+		//if the player has any cards, ask him to discard one
+		if(model.getActivePlayer().getHand().size() > 0)
+		{		
+			model.addState(GameState.SELECT_HAND);
+			model.addObserver(this);
+		}
 	}
 	
 	@Override
@@ -39,8 +39,9 @@ public class CardArbiterofthePrecepice extends Card {
 			model.removeState(GameState.SELECT_HAND);
 			model.removeObserver(this);
 			
-			model.moveCard(card, CardLocation.CENTER_VOID);
+			model.moveCard(card, CardLocation.PLAYER_DISCARD);
+			model.getActivePlayer().drawCard();
+			model.getActivePlayer().drawCard();
 		}
 	}
-
 }

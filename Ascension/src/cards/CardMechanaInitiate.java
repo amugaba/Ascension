@@ -34,7 +34,9 @@ public class CardMechanaInitiate extends Card {
 				model.addRunes(1);
 			else
 				model.addPower(1);
+			
 			model.removeState(GameState.SELECT_OPTION);
+			model.removeObserver(this);
 		}
 	}
 }

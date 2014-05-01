@@ -22,20 +22,20 @@ public class CardAvataroftheFallen extends Card {
 	public void onDefeat(GameModel model)
 	{
 		model.addHonor(honor);
-		model.addState(GameState.SELECT_CENTER_OR_COMMON);
+		model.addState(GameState.SELECT_CENTER);
 		model.addObserver(this);
 	}
 	
 	@Override
 	public void update(GameModel model, GameAction trigger, Object arg) 
 	{	
-		if((trigger == GameAction.SELECT_CENTER || trigger == GameAction.SELECT_COMMON) && arg instanceof Card)
+		if(trigger == GameAction.SELECT_CENTER && arg instanceof Card)
 		{
 			Card card = (Card) arg;
 			model.removeState(GameState.SELECT_CENTER);
-			model.removeState(GameState.SELECT_CENTER_OR_COMMON);
-			model.acquireDefeatFree(card);
 			model.removeObserver(this);
+			
+			model.acquireDefeatFree(card);
 		}
 	}
 	

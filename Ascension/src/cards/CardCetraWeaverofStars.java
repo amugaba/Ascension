@@ -34,10 +34,10 @@ public class CardCetraWeaverofStars extends Card {
 			Card card = (Card) arg;
 			if(card.type == CardType.HERO)
 			{
-				model.removeState(GameState.SELECT_CENTER);
 				model.removeState(GameState.SELECT_CENTER_OR_COMMON);
-				model.acquireTopDeck(card);
 				model.removeObserver(this);
+				
+				model.acquireTopDeck(card);
 			}
 		}
 	}

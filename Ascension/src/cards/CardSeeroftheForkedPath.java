@@ -8,21 +8,21 @@ import model.GameModel;
 import model.GameState;
 import model.ResourceType;
 
-public class CardMephit extends Card {
-
-	public CardMephit() {
-		super();
-		name = "Mephit";
-		cost = 3;
-		costType = ResourceType.POWER;
-		honor = 2;
-		type = CardType.MONSTER;
-		faction = CardFaction.MONSTER;
-	}
-	
-	public void onDefeat(GameModel model)
+public class CardSeeroftheForkedPath extends Card {
+	public CardSeeroftheForkedPath() 
 	{
-		model.addHonor(honor);
+		super();
+		name = "Seer of the Forked Path";
+		cost = 2;
+		costType = ResourceType.RUNES;
+		honor = 1;
+		type = CardType.HERO;
+		faction = CardFaction.ENLIGHTENED;
+	}
+
+	public void play(GameModel model)
+	{
+		model.getActivePlayer().drawCard();
 		model.addState(GameState.SELECT_CENTER);
 		model.setRefusable(true);
 		model.addObserver(this);

@@ -1,30 +1,27 @@
 package cards;
 
-import java.util.EnumSet;
-
 import model.CardFaction;
 import model.CardType;
 import model.GameAction;
 import model.GameModel;
 import model.ResourceType;
 
-public class CardVoidthirster extends Construct {
-
-	public CardVoidthirster() {
+public class CardWatchmakersAltar extends Construct {
+	public CardWatchmakersAltar() {
 		super();
-		name = "Voidthirster";
+		name = "Watchmaker's Altar";
 		cost = 5;
 		costType = ResourceType.RUNES;
-		honor = 3;
+		honor = 5;
 		type = CardType.CONSTRUCT;
-		faction = CardFaction.VOID;
+		faction = CardFaction.MECHANA;
 	}
 	
 	@Override
 	public void play(GameModel model)
 	{
 		super.play(model);
-		model.addPower(1);
+		model.addMechanaRunes(1);
 	}
 	
 	@Override
@@ -34,12 +31,7 @@ public class CardVoidthirster extends Construct {
 		
 		if(trigger == GameAction.TURN_START)
 		{
-			model.addPower(1);
-		}
-		else if(trigger == GameAction.DEFEAT_CENTER && active)
-		{
-			model.addHonor(1);
-			active = false;
+			model.addMechanaRunes(1);
 		}
 	}
 }

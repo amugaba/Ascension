@@ -11,16 +11,16 @@ import model.GameState;
 import model.Player;
 import model.ResourceType;
 
-public class CardCorrosiveWidow extends Card 
-{
-	List<Player> playersToDiscard;
-	public CardCorrosiveWidow()
+public class CardSeaTyrant extends Card {
+	List<Player> playersToPrompt;
+	
+	public CardSeaTyrant()
 	{
 		super();
-		name = "Corrosive Widow";
-		cost = 4;
+		name = "Sea Tyrant";
+		cost = 5;
 		costType = ResourceType.POWER;
-		honor = 3;
+		honor = 5;
 		type = CardType.MONSTER;
 		faction = CardFaction.MONSTER;
 	}
@@ -30,21 +30,21 @@ public class CardCorrosiveWidow extends Card
 		model.addHonor(honor);
 		
 		//show each other player's board, require that person to select a construct
-		playersToDiscard = new ArrayList<Player>();
+		playersToPrompt = new ArrayList<Player>();
 		for(Player p : model.getPlayers())
 		{
-			if(!p.equals(model.getActivePlayer()) && p.getConstructs().size() > 0)
+			if(!p.equals(model.getActivePlayer()) && p.getConstructs().size() > 1)
 			{
-				playersToDiscard.add(p);
+				playersToPrompt.add(p);
 			}
 		}
 		
 		//start with the first player
-		if(playersToDiscard.size() > 0)
+		if(playersToPrompt.size() > 0)
 		{
 			model.addState(GameState.SELECT_CONSTRUCT);
 			model.addObserver(this);
-			model.switchPlayer(playersToDiscard.remove(0));
+			model.switchPlayer(playersToPrompt.remove(0));
 		}
 	}
 	
@@ -54,11 +54,16 @@ public class CardCorrosiveWidow extends Card
 		if(trigger == GameAction.SELECT_CONSTRUCT && arg instanceof Card)
 		{
 			Card card = (Card) arg;
-			model.destroyConstruct(card);
-			
-			if(playersToDiscard.size() > 0)
+			//destroy all constructs except for the one chosen
+			for(Card construct : model.getActivePlayer().getConstructs())
 			{
-				model.switchPlayer(playersToDiscard.remove(0));
+				if(!construct.equals(card))
+					model.destroyConstruct(construct);
+			}
+			
+			if(playersToPrompt.size() > 0)
+			{
+				model.switchPlayer(playersToPrompt.remove(0));
 			}
 			else
 			{

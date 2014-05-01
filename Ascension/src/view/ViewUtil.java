@@ -77,7 +77,6 @@ public final class ViewUtil
 		cardImages.put("Druids of the Stone Circle",new ImageIcon(GameView.class.getResource("/cards/images/Druids-of-the-Stone-Circle.jpg")));
 		cardImages.put("Earth Tyrant",new ImageIcon(GameView.class.getResource("/cards/images/Earth-Tyrant.jpg")));
 		cardImages.put("Emri, One with the Void",new ImageIcon(GameView.class.getResource("/cards/images/Emri-One-with-the-Void.jpg")));
-		cardImages.put("Avatar of the Fallen",new ImageIcon(GameView.class.getResource("/cards/images/Avatar-of-the-Fallen.jpg")));
 		cardImages.put("Flytrap Witch",new ImageIcon(GameView.class.getResource("/cards/images/Flytrap-Witch.jpg")));
 		cardImages.put("Hedron Cannon",new ImageIcon(GameView.class.getResource("/cards/images/Hedron-Cannon.jpg")));
 		cardImages.put("Hedron Link Device",new ImageIcon(GameView.class.getResource("/cards/images/Hedron-Link-Device.jpg")));
@@ -85,9 +84,34 @@ public final class ViewUtil
 		cardImages.put("Landtalker",new ImageIcon(GameView.class.getResource("/cards/images/Landtalker.jpg")));
 		cardImages.put("Lifebound Initiate",new ImageIcon(GameView.class.getResource("/cards/images/Lifebound-Initiate.jpg")));
 		cardImages.put("Master Dhartha",new ImageIcon(GameView.class.getResource("/cards/images/Master-Dhartha.jpg")));
-		//cardImages.put("",new ImageIcon(GameView.class.getResource("/cards/images/.jpg")));
-		
+		cardImages.put("Mechana Initiate",new ImageIcon(GameView.class.getResource("/cards/images/Mechana-Initiate.jpg")));
+		cardImages.put("Mephit",new ImageIcon(GameView.class.getResource("/cards/images/Mephit.jpg")));
+		cardImages.put("Mistake of Creation",new ImageIcon(GameView.class.getResource("/cards/images/Mistake-of-Creation.jpg")));
+		cardImages.put("Muramasa",new ImageIcon(GameView.class.getResource("/cards/images/Muramasa.jpg")));
+		cardImages.put("Oziah the Peerless",new ImageIcon(GameView.class.getResource("/cards/images/Oziah-the-Peerless.jpg")));
+		cardImages.put("Reactor Monk",new ImageIcon(GameView.class.getResource("/cards/images/Reactor-Monk.jpg")));
+		cardImages.put("Rocket Courier X-99",new ImageIcon(GameView.class.getResource("/cards/images/Rocket-Courier-X-99.jpg")));
+		cardImages.put("Runic Lycanthrope",new ImageIcon(GameView.class.getResource("/cards/images/Runic-Lycanthrope.jpg")));
+		cardImages.put("Samael's Trickster",new ImageIcon(GameView.class.getResource("/cards/images/Samaels-Trickster.jpg")));
+		cardImages.put("Sea Tyrant",new ImageIcon(GameView.class.getResource("/cards/images/Sea-Tyrant.jpg")));
+		cardImages.put("Seer of the Forked Path",new ImageIcon(GameView.class.getResource("/cards/images/Seer-of-the-Forked-Path.jpg")));
+		cardImages.put("Shade of the Black Watch",new ImageIcon(GameView.class.getResource("/cards/images/Shade-of-the-Black-Watch.jpg")));
+		cardImages.put("Shadow Star",new ImageIcon(GameView.class.getResource("/cards/images/Shadow-Star.jpg")));
+		cardImages.put("Snapdragon",new ImageIcon(GameView.class.getResource("/cards/images/Snapdragon.jpg")));
+		cardImages.put("Spike Vixen",new ImageIcon(GameView.class.getResource("/cards/images/Spike-Vixen.jpg")));
+		cardImages.put("Tablet of Time's Dawn",new ImageIcon(GameView.class.getResource("/cards/images/Tablet-of-Times-Dawn.jpg")));
+		cardImages.put("Temple Librarian",new ImageIcon(GameView.class.getResource("/cards/images/Temple-Librarian.jpg")));
+		cardImages.put("The All-Seeing Eye",new ImageIcon(GameView.class.getResource("/cards/images/The-All-Seeing-Eye.jpg")));
+		cardImages.put("The Grand Design",new ImageIcon(GameView.class.getResource("/cards/images/The-Grand-Design.jpg")));
+		cardImages.put("Tormented Soul",new ImageIcon(GameView.class.getResource("/cards/images/Tormented-Soul.jpg")));
+		cardImages.put("Twofold Askara",new ImageIcon(GameView.class.getResource("/cards/images/Twofold-Askara.jpg")));
+		cardImages.put("Void Initiate",new ImageIcon(GameView.class.getResource("/cards/images/Void-Initiate.jpg")));
 		cardImages.put("Voidthirster",new ImageIcon(GameView.class.getResource("/cards/images/Voidthirster.jpg")));
+		cardImages.put("Watchmaker's Atlas",new ImageIcon(GameView.class.getResource("/cards/images/Watchmakers-Atlas.jpg")));
+		cardImages.put("Wind Tyrant",new ImageIcon(GameView.class.getResource("/cards/images/Wind-Tyrant.jpg")));
+		cardImages.put("Wolf Shaman",new ImageIcon(GameView.class.getResource("/cards/images/Wolf-Shaman.jpg")));
+		cardImages.put("Xeron, Duke of Lies",new ImageIcon(GameView.class.getResource("/cards/images/Xeron-Duke-of-Lies.jpg")));
+		cardImages.put("Yggdrasil Staff",new ImageIcon(GameView.class.getResource("/cards/images/Yggdrasil-Staff.jpg")));		
 		
 		for(Entry<String, ImageIcon> pair : cardImages.entrySet())
 		{

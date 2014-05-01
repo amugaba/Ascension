@@ -94,9 +94,14 @@ public class GameController
 	
 	public void clickPlayed(int index) 
 	{
+		Card card = model.getPlayedCards().get(index);
 		if(model.getGameState() == GameState.NONE)
 		{
 			// TODO Auto-generated method stub
+		}
+		if(model.getGameState() == GameState.SELECT_PLAYED)
+		{
+			model.selectCard(card);
 		}
 		refreshView();
 	}

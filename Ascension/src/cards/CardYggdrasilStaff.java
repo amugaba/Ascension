@@ -1,23 +1,20 @@
 package cards;
 
-import java.util.EnumSet;
-
 import model.CardFaction;
 import model.CardType;
 import model.GameAction;
 import model.GameModel;
 import model.ResourceType;
 
-public class CardVoidthirster extends Construct {
-
-	public CardVoidthirster() {
+public class CardYggdrasilStaff extends Construct {
+	public CardYggdrasilStaff() {
 		super();
-		name = "Voidthirster";
-		cost = 5;
+		name = "Yggdrasil Staff";
+		cost = 4;
 		costType = ResourceType.RUNES;
-		honor = 3;
+		honor = 2;
 		type = CardType.CONSTRUCT;
-		faction = CardFaction.VOID;
+		faction = CardFaction.LIFEBOUND;
 	}
 	
 	@Override
@@ -36,9 +33,15 @@ public class CardVoidthirster extends Construct {
 		{
 			model.addPower(1);
 		}
-		else if(trigger == GameAction.DEFEAT_CENTER && active)
+	}
+	
+	@Override
+	public void use(GameModel model)
+	{
+		if(active && model.getRunes() >= 4)
 		{
-			model.addHonor(1);
+			model.addRunes(-4);
+			model.addHonor(3);
 			active = false;
 		}
 	}

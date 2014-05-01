@@ -1,21 +1,18 @@
 package cards;
 
-import java.util.EnumSet;
-
 import model.CardFaction;
 import model.CardType;
 import model.GameAction;
 import model.GameModel;
 import model.ResourceType;
 
-public class CardVoidthirster extends Construct {
-
-	public CardVoidthirster() {
+public class CardShadowStar extends Construct {
+	public CardShadowStar() {
 		super();
-		name = "Voidthirster";
-		cost = 5;
+		name = "Shadow Star";
+		cost = 3;
 		costType = ResourceType.RUNES;
-		honor = 3;
+		honor = 2;
 		type = CardType.CONSTRUCT;
 		faction = CardFaction.VOID;
 	}
@@ -35,11 +32,6 @@ public class CardVoidthirster extends Construct {
 		if(trigger == GameAction.TURN_START)
 		{
 			model.addPower(1);
-		}
-		else if(trigger == GameAction.DEFEAT_CENTER && active)
-		{
-			model.addHonor(1);
-			active = false;
 		}
 	}
 }

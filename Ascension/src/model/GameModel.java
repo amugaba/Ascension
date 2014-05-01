@@ -11,7 +11,7 @@ import cards.*;
 public class GameModel
 {
 	private Deck centerDeck;
-	private Player[] players;
+	private List<Player> players;
 	private DeckArray centerRow;
 	private Deck voidDeck;
 	private Deck playedCards;
@@ -23,23 +23,26 @@ public class GameModel
 	
 	private int runesAvailable = 0;
 	private int powerAvailable = 0;
+	private int constructRunes = 0;
+	private int mechanaRunes = 0;
 	
 	private int honorPool;
 	private static final int HONOR_PER_PLAYER = 30;
 	private boolean gameEnding = false;
 	
-	private boolean directAcquire = false;
-	private List<CardType> directAcquireTypes;
-	private int directAcquireCost = 0;
-	
 	//State variables
-	private int activePlayerIndex = 0;
+	private Player activePlayer;
+	private Player temporaryPlayer = null;
+	
 	private List<GameState> stateStack = new ArrayList<GameState>();
+	private boolean actionRefusable = false;
 	
 	private List<ReplaceRule> replaceRules;
 	private List<GameObserver> observers = new ArrayList<GameObserver>();
 	
 	private Player winner;
+	
+	private boolean extraTurn = false;
 	
 	
 	public GameModel()
@@ -51,10 +54,10 @@ public class GameModel
 		centerRow = new DeckArray(CENTER_ROW_SIZE, CardLocation.CENTER_ROW);
 		fillCenterRow();
 		
-		players = new Player[NUM_PLAYERS];
+		players = new ArrayList<Player>();
 		for(int i=0; i<NUM_PLAYERS; i++)
 		{
-			players[i] = new Player(this, "Player " + String.valueOf(i+1));
+			players.add(new Player(this, "Player " + String.valueOf(i+1)));
 		}
 		honorPool = HONOR_PER_PLAYER * NUM_PLAYERS;
 		
@@ -62,6 +65,8 @@ public class GameModel
 		playedCards = new Deck(CardLocation.PLAYED_CARDS);
 		commonCards = new Deck(CardList.generateCommonCards(), CardLocation.COMMON_CARDS);
 		replaceRules = new ArrayList<ReplaceRule>();
+		
+		activePlayer = players.get(0);
 	}
 
 	private void fillCenterRow() 
@@ -91,7 +96,7 @@ public class GameModel
 	}
 	public void addHonor(int i) 
 	{
-		players[activePlayerIndex].addHonor(i);
+		activePlayer.addHonor(i);
 		honorPool -= i;
 		if(honorPool < 0)
 		{
@@ -107,12 +112,23 @@ public class GameModel
 	
 	public boolean canAcquireDefeat(Card card) 
 	{
-		if(directAcquire && directAcquireTypes.contains(card.type) && directAcquireCost >= card.cost)
+		if(card.costType == ResourceType.POWER && powerAvailable >= card.cost)
 			return true;
-		else if(card.costType == ResourceType.POWER && powerAvailable >= card.cost)
+		
+		int totalRunes = runesAvailable;
+		
+		//Add type-specific runes when applicable
+		if(card.type == CardType.CONSTRUCT)
+		{
+			totalRunes += constructRunes;
+			//Add mechana runes too
+			if(card.getFactions().contains(CardFaction.MECHANA))
+				totalRunes += mechanaRunes;
+		}
+				
+		if(card.costType == ResourceType.RUNES && totalRunes >= card.cost)
 			return true;
-		else if(card.costType == ResourceType.RUNES && runesAvailable >= card.cost)
-			return true;
+
 		return false;
 	}
 
@@ -138,6 +154,8 @@ public class GameModel
 		{
 			card.onAcquire(this);
 			moveCard(card, CardLocation.PLAYER_DISCARD);
+			if(card.type == CardType.CONSTRUCT)
+				notifyObservers(GameAction.ACQUIRE_CONSTRUCT, card);
 		}
 	}
 	
@@ -149,17 +167,32 @@ public class GameModel
 
 	private void payFor(Card card) 
 	{
-		if(directAcquire)
+		if(card.costType == ResourceType.POWER)
+			powerAvailable -= card.cost;
+		
+		
+		int totalCost = card.cost;
+		
+		//Pay for the cost from type-specific runes first
+		if(card.type == CardType.CONSTRUCT)
 		{
-			directAcquire = false;
+			int runesConsumed;
+			
+			//Use mechana runes first
+			if(card.getFactions().contains(CardFaction.MECHANA))
+			{
+				runesConsumed = Math.min(totalCost, mechanaRunes);
+				totalCost -= runesConsumed;
+				mechanaRunes -= runesConsumed;
+			}
+			
+			runesConsumed = Math.min(totalCost, constructRunes);
+			totalCost -= runesConsumed;
+			constructRunes -= runesConsumed;	
 		}
-		else
-		{
-			if(card.costType == ResourceType.RUNES)
-				runesAvailable -= card.cost;
-			else if(card.costType == ResourceType.POWER)
-				powerAvailable -= card.cost;
-		}
+		
+		if(card.costType == ResourceType.RUNES)
+			runesAvailable -= totalCost;	
 	}
 
 	
@@ -174,16 +207,23 @@ public class GameModel
 		moveAll(CardLocation.PLAYED_CARDS, CardLocation.PLAYER_DISCARD);
 		moveAll(CardLocation.PLAYER_HAND, CardLocation.PLAYER_DISCARD);
 		
-		//if the game is ending and the current player is the last player in the turn order
-		if(gameEnding && activePlayerIndex == NUM_PLAYERS-1)
-		{
-			endGame();
-		}
-
-		activePlayerIndex++;
-		activePlayerIndex %= players.length;
 		runesAvailable = 0;
 		powerAvailable = 0;
+		constructRunes = 0;
+		mechanaRunes = 0;
+		
+		if(!extraTurn)
+		{
+			int playerIndex = players.indexOf(activePlayer);
+			//if the game is ending and the current player is the last player in the turn order
+			if(gameEnding && playerIndex == players.size()-1)
+			{
+				endGame();
+			}
+	
+			activePlayer = getNextPlayer();
+		}
+		
 	}
 	
 	private void endGame()
@@ -193,9 +233,8 @@ public class GameModel
 		//add up player honor to determine winner
 		int maxHonor = 0;
 		Player playerMaxHonor = null;
-		for(int i=0; i < NUM_PLAYERS; i++)
+		for(Player p : players)
 		{
-			Player p = players[i];
 			int totalHonor = p.getHonor();
 			for(Card card : p.getConstructs())
 				totalHonor += card.honor;
@@ -221,10 +260,14 @@ public class GameModel
 	
 	public Player getNextPlayer()
 	{
-		int index = (activePlayerIndex + 1) % players.length;
-		return players[index];
+		int index = (players.indexOf(activePlayer) + 1) % players.size();
+		return players.get(index);
 	}
 	
+	public List<Player> getPlayers()
+	{
+		return players;
+	}
 	
 	public void startTurn() 
 	{
@@ -241,7 +284,7 @@ public class GameModel
 	
 	public Player getActivePlayer() 
 	{
-		return players[activePlayerIndex];
+		return activePlayer;
 	}
 
 	
@@ -255,7 +298,10 @@ public class GameModel
 				notifyObservers(GameAction.PLAY_MECHANA_CONSTRUCT, card);
 		}
 		else
+		{
 			moveCard(card, CardLocation.PLAYED_CARDS);
+			notifyObservers(GameAction.PLAY_HERO, card);
+		}
 	}
 
 	
@@ -362,6 +408,10 @@ public class GameModel
 		{
 			notifyObservers(GameAction.SELECT_COMMON, card);
 		}
+		else if(getCards(CardLocation.PLAYED_CARDS).contains(card))
+		{
+			notifyObservers(GameAction.SELECT_PLAYED, card);
+		}
 	}
 	
 	public Card getHandCard(int index)
@@ -369,10 +419,15 @@ public class GameModel
 		return getActivePlayer().getHandCard(index);
 	}
 
-	public void switchPlayer() {
-		//TBD
-		activePlayerIndex++;
-		activePlayerIndex %= players.length;
+	public void switchPlayer(Player p) {
+		if(temporaryPlayer == null)
+			temporaryPlayer = activePlayer;
+		activePlayer = p;
+	}
+	
+	public void resumeActivePlayer() {
+		activePlayer = temporaryPlayer;
+		temporaryPlayer = null;
 	}
 	
 	public void destroyConstruct(Card card)
@@ -483,5 +538,30 @@ public class GameModel
 	public void selectOption(int i) 
 	{
 		notifyObservers(GameAction.SELECT_OPTION, 1);
+	}
+
+	public void setRefusable(boolean b) 
+	{
+		actionRefusable = b;
+	}
+	
+	public boolean getRefusable()
+	{
+		return actionRefusable;
+	}
+
+	public void addConstructRunes(int i) 
+	{
+		constructRunes += i;
+	}
+
+	public void addExtraTurn() 
+	{
+		extraTurn = true;
+	}
+
+	public void addMechanaRunes(int i) 
+	{
+		mechanaRunes += i;
 	}
 }
