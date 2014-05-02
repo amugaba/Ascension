@@ -5,11 +5,11 @@ import java.util.List;
 
 import model.CardFaction;
 import model.CardType;
-import model.GameAction;
+import model.ActionNotice;
 import model.GameModel;
-import model.GameState;
 import model.Player;
 import model.ResourceType;
+import model.ActionRequest.RequestType;
 
 public class CardSeaTyrant extends Card {
 	List<Player> playersToPrompt;
@@ -42,35 +42,44 @@ public class CardSeaTyrant extends Card {
 		//start with the first player
 		if(playersToPrompt.size() > 0)
 		{
-			model.addState(GameState.SELECT_CONSTRUCT);
-			model.addObserver(this);
+			model.requestAction(RequestType.SELECT_CONSTRUCT, this, false);
 			model.switchPlayer(playersToPrompt.remove(0));
 		}
 	}
 	
 	@Override
-	public void update(GameModel model, GameAction trigger, Object arg) 
-	{	
-		if(trigger == GameAction.SELECT_CONSTRUCT && arg instanceof Card)
+	public boolean isActionArgumentValid(GameModel model, RequestType type, Object arg) 
+	{
+		if(type == RequestType.SELECT_CONSTRUCT && arg instanceof Card)
 		{
 			Card card = (Card) arg;
-			//destroy all constructs except for the one chosen
-			for(Card construct : model.getActivePlayer().getConstructs())
+			if(card.type == CardType.CONSTRUCT)
 			{
-				if(!construct.equals(card))
-					model.destroyConstruct(construct);
+				return true;
 			}
-			
-			if(playersToPrompt.size() > 0)
-			{
-				model.switchPlayer(playersToPrompt.remove(0));
-			}
-			else
-			{
-				model.removeState(GameState.SELECT_CONSTRUCT);
-				model.removeObserver(this);
-				model.resumeActivePlayer();
-			}
+		}
+		return false;
+	}
+	
+	@Override
+	public void execute(GameModel model, RequestType type, Object arg) 
+	{
+		super.execute(model, type, arg);
+		Card card = (Card) arg;			
+		for(Card construct : model.getActivePlayer().getConstructs())
+		{
+			if(!construct.equals(card))
+				model.destroyConstruct(construct);
+		}
+		
+		if(playersToPrompt.size() > 0)
+		{
+			model.requestAction(RequestType.SELECT_CONSTRUCT, this, false);
+			model.switchPlayer(playersToPrompt.remove(0));
+		}
+		else
+		{
+			model.resumeActivePlayer();
 		}
 	}
 }

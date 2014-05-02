@@ -2,7 +2,7 @@ package cards;
 
 import model.CardFaction;
 import model.CardType;
-import model.GameAction;
+import model.ActionNotice;
 import model.GameModel;
 import model.ResourceType;
 
@@ -25,15 +25,15 @@ public class CardSnapdragon extends Construct {
 	}
 	
 	@Override
-	public void update(GameModel model, GameAction trigger, Object arg) 
+	public void update(GameModel model, ActionNotice trigger, Object arg) 
 	{	
 		super.update(model, trigger, arg);
 		
-		if(trigger == GameAction.TURN_START)
+		if(trigger == ActionNotice.TURN_START)
 		{
 			model.addRunes(1);
 		}
-		else if(trigger == GameAction.PLAY_HERO && active && arg instanceof Card)
+		else if(trigger == ActionNotice.HERO_PLAYED && active && arg instanceof Card)
 		{
 			Card card = (Card) arg;
 			if(card.getFactions().contains(CardFaction.LIFEBOUND))

@@ -1,11 +1,12 @@
 package cards;
 
 import model.CardFaction;
+import model.CardLocation;
 import model.CardType;
-import model.GameAction;
+import model.ActionNotice;
 import model.GameModel;
-import model.GameState;
 import model.ResourceType;
+import model.ActionRequest.RequestType;
 
 public class CardTwofoldAskara extends Card {
 	public CardTwofoldAskara() 
@@ -23,21 +24,15 @@ public class CardTwofoldAskara extends Card {
 	{		
 		if(model.getPlayedCards().size() > 0)
 		{
-			model.addState(GameState.SELECT_PLAYED);
-			model.addObserver(this);
+			model.requestAction(RequestType.SELECT_PLAYED, this, false);
 		}
 	}
-	
+		
 	@Override
-	public void update(GameModel model, GameAction trigger, Object arg) 
-	{	
-		if(trigger == GameAction.SELECT_PLAYED && arg instanceof Card)
-		{
-			Card card = (Card) arg;
-			model.removeState(GameState.SELECT_PLAYED);
-			model.removeObserver(this);
-			
-			card.play(model);
-		}
+	public void execute(GameModel model, RequestType type, Object arg) 
+	{
+		super.execute(model, type, arg);
+		Card card = (Card) arg;			
+		card.play(model);
 	}
 }

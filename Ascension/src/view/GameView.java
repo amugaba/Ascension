@@ -36,6 +36,7 @@ import view.panels.CenterPanel;
 import view.panels.CommonCardsPanel;
 import view.panels.ConstructsPanel;
 import view.panels.DeckPanel;
+import view.panels.DiscardPanel;
 import view.panels.HandPanel;
 import view.panels.PlayedPanel;
 import view.panels.StatusPanel;
@@ -71,8 +72,11 @@ public class GameView
 	private static final int PLAYER_DECK_X = 10;
 	private static final int PLAYER_DECK_Y = 500;
 	
-	private static final int PLAYER_DISCARD_X = 1200;
-	private static final int PLAYER_DISCARD_Y = 500;
+	private static final int DISCARD_DECK_X = 1200;
+	private static final int DISCARD_DECK_Y = 500;
+	private static final int DISCARD_PANEL_X = 1000;
+	private static final int DISCARD_PANEL_Y = 600;
+	private static final int DISCARD_PANEL_WIDTH_MAX = 500;
 	
 	private static final int CENTER_DECK_X = 1000;
 	private static final int CENTER_DECK_Y = 20;
@@ -95,6 +99,7 @@ public class GameView
 	private PlayedPanel playedPanel;
 	private CommonCardsPanel commonCardsPanel;
 	private ConstructsPanel constructsPanel;
+	private DiscardPanel discardPanel;
 	
 	//Deck panels
 	private DeckPanel centerDeckPanel;
@@ -104,7 +109,7 @@ public class GameView
 	
 	//Other
 	private StatusPanel statusPanel;
-	
+	private JButton refuseActionButton;	
 	private JLabel playerNameLabel;
 	private JButton endTurnButton;
 
@@ -173,14 +178,36 @@ public class GameView
 		constructsPanel = new ConstructsPanel(controller, CONSTRUCTS_X, CONSTRUCTS_Y, DEFAULT_SPACING, CONSTRUCTS_WIDTH_MAX);
 		frame.getLayeredPane().add(constructsPanel, new Integer(1));
 		
+		discardPanel = new DiscardPanel(controller, DISCARD_PANEL_X, DISCARD_PANEL_Y, DEFAULT_SPACING, DISCARD_PANEL_WIDTH_MAX);
+		frame.getLayeredPane().add(discardPanel, new Integer(1));
+		discardPanel.setVisible(false);
+		
 		//Other
 		statusPanel = new StatusPanel(RESOURCES_X, RESOURCES_Y);
 		frame.getLayeredPane().add(statusPanel, new Integer(1));
 		
-		endTurnButton = new JButton(new endTurnAction());
+		endTurnButton = new JButton();
+		endTurnButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.endTurn();
+			}
+		});
 		endTurnButton.setText("End Turn");
 		endTurnButton.setBounds(1100, 400, 167, 55);
 		frame.getLayeredPane().add(endTurnButton, new Integer(1));
+		
+		refuseActionButton = new JButton();
+		refuseActionButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.refuseAction();
+			}
+		});
+		refuseActionButton.setText("None");
+		refuseActionButton.setBounds(1100, 300, 167, 55);
+		refuseActionButton.setVisible(false);
+		frame.getLayeredPane().add(refuseActionButton, new Integer(1));
 		
 		//Deck panels
 		playerDeckPanel = new DeckPanel(PLAYER_DECK_X, PLAYER_DECK_Y, "/assets/cardback-green.jpg", 
@@ -191,11 +218,11 @@ public class GameView
 					}	}	);
 		frame.getLayeredPane().add(playerDeckPanel, new Integer(1));
 		
-		playerDiscardPanel = new DeckPanel(PLAYER_DISCARD_X, PLAYER_DISCARD_Y, "/assets/cardback-red.jpg", 
+		playerDiscardPanel = new DeckPanel(DISCARD_DECK_X, DISCARD_DECK_Y, "/assets/cardback-red.jpg", 
 				new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						// TBD						
+						discardPanel.setVisible(!discardPanel.isVisible());			
 					}	}	);
 		frame.getLayeredPane().add(playerDiscardPanel, new Integer(1));
 		
@@ -214,15 +241,6 @@ public class GameView
 						// TBD						
 					}	}	);
 		frame.getLayeredPane().add(centerDiscardPanel, new Integer(1));
-	}
-	
-	public class endTurnAction extends AbstractAction
-	{
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			controller.endTurn();
-		}
 	}
 	
 	private JLabel makeLabel(String text)
@@ -303,5 +321,19 @@ public class GameView
 	public void addToConstructs(String name)
 	{
 		constructsPanel.addCard(name);
+	}
+	
+	public void addToDiscard(String name) 
+	{
+		discardPanel.addCard(name);
+	}
+
+	public void clearDiscard() 
+	{
+		discardPanel.clearCards();
+	}
+
+	public void enableRefuseButton(boolean b) {
+		refuseActionButton.setVisible(b);
 	}
 }

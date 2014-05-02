@@ -2,7 +2,7 @@ package cards;
 
 import model.CardFaction;
 import model.CardType;
-import model.GameAction;
+import model.ActionNotice;
 import model.GameModel;
 import model.ResourceType;
 
@@ -19,11 +19,11 @@ public class CardBurrowerMarkII extends Construct {
 	}
 	
 	@Override
-	public void update(GameModel model, GameAction trigger, Object arg) 
+	public void update(GameModel model, ActionNotice trigger, Object arg) 
 	{	
 		super.update(model, trigger, arg);
 		
-		if(trigger == GameAction.PLAY_MECHANA_CONSTRUCT && active)
+		if(trigger == ActionNotice.MECHANA_CONSTRUCT_PLAYED && active)
 		{
 			model.getActivePlayer().drawCard();
 			active = false;

@@ -6,14 +6,13 @@ import java.util.EnumSet;
 import model.CardFaction;
 import model.CardLocation;
 import model.CardType;
-import model.GameAction;
+import model.ActionNotice;
 import model.GameException;
 import model.GameModel;
-import model.GameState;
 import model.GameObserver;
 import model.Player;
-import model.ReplaceRule;
 import model.ResourceType;
+import model.ActionRequest.RequestType;
 
 public class Card implements GameObserver
 {
@@ -23,7 +22,6 @@ public class Card implements GameObserver
 	public int honor;
 	public CardType type;
 	protected CardFaction faction;
-	public ReplaceRule rule;
 	public CardLocation	location;
 	public Player owner = null;
 	
@@ -36,19 +34,9 @@ public class Card implements GameObserver
 	public void onDefeat(GameModel gameModel) {		}
 
 	public void onAcquire(GameModel gameModel) {	}
-	
-	public void addReplaceRule(GameModel gameModel)
-	{
-		gameModel.addReplaceRule(rule);
-	}
-	
-	public void removeReplaceRule(GameModel gameModel)
-	{
-		gameModel.removeReplaceRule(rule);
-	}
 
 	@Override
-	public void update(GameModel model, GameAction trigger, Object arg) {	}
+	public void update(GameModel model, ActionNotice trigger, Object arg) {	}
 	
 	public EnumSet<CardFaction> getFactions()
 	{
@@ -58,5 +46,14 @@ public class Card implements GameObserver
 	public boolean isBanishable()
 	{
 		return true;
+	}
+
+	public boolean isActionArgumentValid(GameModel model, RequestType type, Object arg) {
+		return true;
+	}
+
+	public void execute(GameModel model, RequestType type, Object arg) {
+		if(isActionArgumentValid(model, type, arg))
+			return;		
 	}
 }

@@ -3,7 +3,6 @@ package cards;
 import model.CardFaction;
 import model.CardType;
 import model.GameModel;
-import model.GameState;
 import model.Player;
 import model.ResourceType;
 

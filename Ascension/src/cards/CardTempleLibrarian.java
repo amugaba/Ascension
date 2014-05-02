@@ -1,11 +1,11 @@
 package cards;
 
+import model.ActionRequest.RequestType;
 import model.CardFaction;
 import model.CardLocation;
 import model.CardType;
-import model.GameAction;
+import model.ActionNotice;
 import model.GameModel;
-import model.GameState;
 import model.ResourceType;
 
 public class CardTempleLibrarian extends Card {
@@ -25,23 +25,17 @@ public class CardTempleLibrarian extends Card {
 		//if the player has any cards, ask him to discard one
 		if(model.getActivePlayer().getHand().size() > 0)
 		{		
-			model.addState(GameState.SELECT_HAND);
-			model.addObserver(this);
+			model.requestAction(RequestType.SELECT_HAND, this, false);
 		}
 	}
-	
+		
 	@Override
-	public void update(GameModel model, GameAction trigger, Object arg) 
-	{	
-		if(trigger == GameAction.SELECT_HAND && arg instanceof Card)
-		{
-			Card card = (Card) arg;
-			model.removeState(GameState.SELECT_HAND);
-			model.removeObserver(this);
-			
-			model.moveCard(card, CardLocation.PLAYER_DISCARD);
-			model.getActivePlayer().drawCard();
-			model.getActivePlayer().drawCard();
-		}
+	public void execute(GameModel model, RequestType type, Object arg) 
+	{
+		super.execute(model, type, arg);
+		Card card = (Card) arg;			
+		model.moveCard(card, CardLocation.PLAYER_DISCARD);
+		model.getActivePlayer().drawCard();
+		model.getActivePlayer().drawCard();
 	}
 }

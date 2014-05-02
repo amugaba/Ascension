@@ -3,7 +3,7 @@ package cards;
 import java.util.EnumSet;
 
 import model.CardFaction;
-import model.GameAction;
+import model.ActionNotice;
 import model.GameModel;
 
 public class Construct extends Card 
@@ -26,9 +26,9 @@ public class Construct extends Card
 	}
 	
 	@Override
-	public void update(GameModel model, GameAction trigger, Object arg) 
+	public void update(GameModel model, ActionNotice trigger, Object arg) 
 	{	
-		if(trigger == GameAction.TURN_START)
+		if(trigger == ActionNotice.TURN_START)
 		{
 			active = true;
 		}

@@ -1,12 +1,13 @@
 package cards;
 
+import model.ActionRequest;
+import model.ActionRequest.RequestType;
 import model.CardFaction;
 import model.CardLocation;
 import model.CardType;
-import model.GameAction;
+import model.ActionNotice;
 import model.GameModel;
 import model.ResourceType;
-import model.GameState;
 
 public class CardArbiterofthePrecepice extends Card {
 
@@ -26,21 +27,30 @@ public class CardArbiterofthePrecepice extends Card {
 		model.getActivePlayer().drawCard();
 		model.getActivePlayer().drawCard();
 		
-		model.addState(GameState.SELECT_HAND);
-		model.addObserver(this);
+		model.requestAction(RequestType.SELECT_HAND, this, false);
+		//model.addState(RequestType.SELECT_HAND);
+		//model.addObserver(this);
 	}
 	
 	@Override
-	public void update(GameModel model, GameAction trigger, Object arg) 
+	public void execute(GameModel model, RequestType type, Object arg) 
+	{
+		super.execute(model, type, arg);
+		Card card = (Card) arg;
+		model.moveCard(card, CardLocation.CENTER_VOID);
+	}
+	
+	/*@Override
+	public void update(GameModel model, ActionNotice trigger, Object arg) 
 	{	
-		if(trigger == GameAction.SELECT_HAND && arg instanceof Card)
+		if(trigger == ActionNotice.HAND_SELECTED && arg instanceof Card)
 		{
 			Card card = (Card) arg;
-			model.removeState(GameState.SELECT_HAND);
+			model.removeState(RequestType.SELECT_HAND);
 			model.removeObserver(this);
 			
 			model.moveCard(card, CardLocation.CENTER_VOID);
 		}
-	}
+	}*/
 
 }

@@ -4,7 +4,7 @@ import java.util.EnumSet;
 
 import model.CardFaction;
 import model.CardType;
-import model.GameAction;
+import model.ActionNotice;
 import model.GameModel;
 import model.ResourceType;
 
@@ -28,15 +28,15 @@ public class CardVoidthirster extends Construct {
 	}
 	
 	@Override
-	public void update(GameModel model, GameAction trigger, Object arg) 
+	public void update(GameModel model, ActionNotice trigger, Object arg) 
 	{	
 		super.update(model, trigger, arg);
 		
-		if(trigger == GameAction.TURN_START)
+		if(trigger == ActionNotice.TURN_START)
 		{
 			model.addPower(1);
 		}
-		else if(trigger == GameAction.DEFEAT_CENTER && active)
+		else if(trigger == ActionNotice.CENTER_DEFEATED && active)
 		{
 			model.addHonor(1);
 			active = false;

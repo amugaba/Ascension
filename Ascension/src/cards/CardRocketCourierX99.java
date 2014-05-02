@@ -3,7 +3,7 @@ package cards;
 import model.CardFaction;
 import model.CardLocation;
 import model.CardType;
-import model.GameAction;
+import model.ActionNotice;
 import model.GameModel;
 import model.ResourceType;
 
@@ -19,11 +19,11 @@ public class CardRocketCourierX99 extends Construct {
 	}
 	
 	@Override
-	public void update(GameModel model, GameAction trigger, Object arg) 
+	public void update(GameModel model, ActionNotice trigger, Object arg) 
 	{	
 		super.update(model, trigger, arg);
 		
-		if(trigger == GameAction.ACQUIRE_CONSTRUCT && active && arg instanceof Card)
+		if(trigger == ActionNotice.CONSTRUCT_ACQUIRED && active && arg instanceof Card)
 		{
 			Card card = (Card)arg;
 			if(card.getFactions().contains(CardFaction.MECHANA))

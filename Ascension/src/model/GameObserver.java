@@ -4,5 +4,5 @@ import java.util.EnumSet;
 
 public interface GameObserver 
 {
-	void update(GameModel model, GameAction trigger, Object arg);
+	void update(GameModel model, ActionNotice trigger, Object arg);
 }

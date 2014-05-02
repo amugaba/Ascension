@@ -5,11 +5,11 @@ import java.util.List;
 
 import model.CardFaction;
 import model.CardType;
-import model.GameAction;
+import model.ActionNotice;
 import model.GameModel;
-import model.GameState;
 import model.Player;
 import model.ResourceType;
+import model.ActionRequest.RequestType;
 
 public class CardCorrosiveWidow extends Card 
 {
@@ -42,30 +42,40 @@ public class CardCorrosiveWidow extends Card
 		//start with the first player
 		if(playersToDiscard.size() > 0)
 		{
-			model.addState(GameState.SELECT_CONSTRUCT);
-			model.addObserver(this);
+			model.requestAction(RequestType.SELECT_CONSTRUCT, this, false);
 			model.switchPlayer(playersToDiscard.remove(0));
 		}
 	}
 	
 	@Override
-	public void update(GameModel model, GameAction trigger, Object arg) 
-	{	
-		if(trigger == GameAction.SELECT_CONSTRUCT && arg instanceof Card)
+	public boolean isActionArgumentValid(GameModel model, RequestType type, Object arg) 
+	{
+		if(type == RequestType.SELECT_CONSTRUCT && arg instanceof Card)
 		{
 			Card card = (Card) arg;
-			model.destroyConstruct(card);
-			
-			if(playersToDiscard.size() > 0)
+			if(card.type == CardType.CONSTRUCT)
 			{
-				model.switchPlayer(playersToDiscard.remove(0));
+				return true;
 			}
-			else
-			{
-				model.removeState(GameState.SELECT_CONSTRUCT);
-				model.removeObserver(this);
-				model.resumeActivePlayer();
-			}
+		}
+		return false;
+	}
+	
+	@Override
+	public void execute(GameModel model, RequestType type, Object arg) 
+	{
+		super.execute(model, type, arg);
+		Card card = (Card) arg;			
+		model.destroyConstruct(card);
+		
+		if(playersToDiscard.size() > 0)
+		{
+			model.requestAction(RequestType.SELECT_CONSTRUCT, this, false);
+			model.switchPlayer(playersToDiscard.remove(0));
+		}
+		else
+		{
+			model.resumeActivePlayer();
 		}
 	}
 }

@@ -1,10 +1,11 @@
 package cards;
 
+import model.ActionRequest.RequestType;
 import model.CardFaction;
+import model.CardLocation;
 import model.CardType;
-import model.GameAction;
+import model.ActionNotice;
 import model.GameModel;
-import model.GameState;
 import model.ResourceType;
 
 public class CardCetraWeaverofStars extends Card {
@@ -22,23 +23,28 @@ public class CardCetraWeaverofStars extends Card {
 	@Override
 	public void play(GameModel model)
 	{
-		model.addState(GameState.SELECT_CENTER_OR_COMMON);
-		model.addObserver(this);
+		model.requestAction(RequestType.SELECT_CENTER_OR_COMMON, this, false);
 	}
 	
 	@Override
-	public void update(GameModel model, GameAction trigger, Object arg) 
-	{	
-		if((trigger == GameAction.SELECT_CENTER || trigger == GameAction.SELECT_COMMON) && arg instanceof Card)
+	public boolean isActionArgumentValid(GameModel model, RequestType type, Object arg) 
+	{
+		if(type == RequestType.SELECT_CENTER_OR_COMMON && arg instanceof Card)
 		{
 			Card card = (Card) arg;
 			if(card.type == CardType.HERO)
 			{
-				model.removeState(GameState.SELECT_CENTER_OR_COMMON);
-				model.removeObserver(this);
-				
-				model.acquireTopDeck(card);
+				return true;
 			}
 		}
+		return false;
+	}
+	
+	@Override
+	public void execute(GameModel model, RequestType type, Object arg) 
+	{
+		super.execute(model, type, arg);
+		Card card = (Card) arg;
+		model.acquireTopDeck(card);
 	}
 }

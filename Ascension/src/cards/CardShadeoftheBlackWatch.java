@@ -3,10 +3,10 @@ package cards;
 import model.CardFaction;
 import model.CardLocation;
 import model.CardType;
-import model.GameAction;
+import model.ActionNotice;
 import model.GameModel;
-import model.GameState;
 import model.ResourceType;
+import model.ActionRequest.RequestType;
 
 public class CardShadeoftheBlackWatch extends Card {
 	public CardShadeoftheBlackWatch() 
@@ -22,30 +22,15 @@ public class CardShadeoftheBlackWatch extends Card {
 
 	public void play(GameModel model)
 	{
-		model.addPower(2);
-		
-		model.addState(GameState.SELECT_HAND_OR_DISCARD);
-		model.setRefusable(true);
-		model.addObserver(this);
+		model.addPower(2);	
+		model.requestAction(RequestType.SELECT_HAND_OR_DISCARD, this, true);
 	}
 	
 	@Override
-	public void update(GameModel model, GameAction trigger, Object arg) 
-	{	
-		if((trigger == GameAction.SELECT_HAND || trigger == GameAction.SELECT_DISCARD) && arg instanceof Card)
-		{
-			Card card = (Card) arg;
-			model.removeState(GameState.SELECT_HAND_OR_DISCARD);
-			model.removeObserver(this);
-			model.setRefusable(false);
-			
-			model.moveCard(card, CardLocation.CENTER_VOID);
-		}
-		if(trigger == GameAction.REFUSE)
-		{
-			model.removeState(GameState.SELECT_HAND_OR_DISCARD);
-			model.removeObserver(this);
-			model.setRefusable(false);
-		}
+	public void execute(GameModel model, RequestType type, Object arg) 
+	{
+		super.execute(model, type, arg);
+		Card card = (Card) arg;			
+		model.moveCard(card, CardLocation.CENTER_VOID);
 	}
 }

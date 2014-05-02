@@ -4,10 +4,11 @@ import cards.Card;
 import cards.CardCultist;
 import cards.CardHeavyInfantry;
 import cards.CardMystic;
+import model.ActionRequest.RequestType;
+import model.ActionRequest;
 import model.CardLocation;
 import model.GameException;
 import model.GameModel;
-import model.GameState;
 import model.Player;
 import view.GameView;
 
@@ -15,6 +16,8 @@ public class GameController
 {
 	GameView view;
 	GameModel model;
+	
+	RequestType actionRequested;
 	//when the model executes an action, sometimes it realizes that it has to pause and ask the player to do another action
 	//in those cases, it sets forceAction to true and sets an GameState enum
 	//the controller sess that when it refreshes the view after doing an action
@@ -39,13 +42,13 @@ public class GameController
 	{
 		Card card = model.getCenterRow().get(index);
 		//default action is to acquire/defeat card
-		if(model.getGameState() == GameState.NONE && model.canAcquireDefeat(card))
+		if(actionRequested == RequestType.NONE && model.canAcquireDefeat(card))
 		{
 			model.acquireDefeat(card);
 		}
-		if(model.getGameState() == GameState.SELECT_CENTER || model.getGameState() == GameState.SELECT_CENTER_OR_COMMON)
+		if(actionRequested == RequestType.SELECT_CENTER || actionRequested == RequestType.SELECT_CENTER_OR_COMMON)
 		{
-			model.selectCard(card);
+			model.executeAction(card);
 		}
 		refreshView();
 	}
@@ -53,13 +56,13 @@ public class GameController
 	public void clickHand(int index)
 	{
 		Card card = model.getActivePlayer().getHandCard(index);
-		if(model.getGameState() == GameState.NONE)
+		if(actionRequested == RequestType.NONE)
 		{
 			model.playCard(card);
 		}
-		else if(model.getGameState() == GameState.SELECT_HAND || model.getGameState() == GameState.SELECT_HAND_OR_DISCARD)
+		else if(actionRequested == RequestType.SELECT_HAND || actionRequested == RequestType.SELECT_HAND_OR_DISCARD)
 		{
-			model.selectCard(card);
+			model.executeAction(card);
 		}
 		refreshView();
 	}
@@ -67,13 +70,13 @@ public class GameController
 	public void clickCommon(int index)
 	{
 		Card card = model.getCommonCards().get(index);
-		if(model.getGameState() == GameState.NONE && model.canAcquireDefeat(card))
+		if(actionRequested == RequestType.NONE && model.canAcquireDefeat(card))
 		{
 			model.acquireDefeat(card);
 		}
-		else if(model.getGameState() == GameState.SELECT_CENTER_OR_COMMON)
+		else if(actionRequested == RequestType.SELECT_CENTER_OR_COMMON)
 		{
-			model.selectCard(card);
+			model.executeAction(card);
 		}
 		refreshView();
 	}
@@ -81,13 +84,13 @@ public class GameController
 	public void clickConstruct(int index) 
 	{
 		Card card = model.getActivePlayer().getConstructs().get(index);
-		if(model.getGameState() == GameState.NONE)
+		if(actionRequested == RequestType.NONE)
 		{
 			model.useConstruct(card);
 		}
-		if(model.getGameState() == GameState.SELECT_CONSTRUCT)
+		if(actionRequested == RequestType.SELECT_CONSTRUCT)
 		{
-			model.selectCard(card);
+			model.executeAction(card);
 		}
 		refreshView();
 	}
@@ -95,13 +98,13 @@ public class GameController
 	public void clickPlayed(int index) 
 	{
 		Card card = model.getPlayedCards().get(index);
-		if(model.getGameState() == GameState.NONE)
+		if(actionRequested == RequestType.NONE)
 		{
 			// TODO Auto-generated method stub
 		}
-		if(model.getGameState() == GameState.SELECT_PLAYED)
+		if(actionRequested == RequestType.SELECT_PLAYED)
 		{
-			model.selectCard(card);
+			model.executeAction(card);
 		}
 		refreshView();
 	}
@@ -131,10 +134,10 @@ public class GameController
 		view.updateStatus(model.getRunes(), model.getPower(), player.getHonor());
 		
 		//Deck counts
-		view.updateDeckCounts(model.getCards(CardLocation.PLAYER_DECK).size(), 
-				model.getCards(CardLocation.PLAYER_DISCARD).size(), 
-				model.getCards(CardLocation.CENTER_DECK).size(), 
-				model.getCards(CardLocation.CENTER_VOID).size());
+		view.updateDeckCounts(model.getActivePlayer().getDeck().size(), 
+				model.getActivePlayer().getDiscard().size(), 
+				model.getCenterDeck().size(), 
+				model.getVoidCards().size());
 		
 		//Played cards
 		view.clearPlayed();
@@ -150,12 +153,31 @@ public class GameController
 			view.addToConstructs(card.name);
 		}
 		
+		//Discarded cards
+		view.clearDiscard();
+		for(Card card : model.getActivePlayer().getDiscard())
+		{
+			view.addToDiscard(card.name);
+		}
+		
 		view.refresh();
+		
+		ActionRequest action = model.getActionRequested();
+		if(action == null)
+		{
+			actionRequested = RequestType.NONE;
+			view.enableRefuseButton(false);
+		}
+		else
+		{
+			actionRequested = action.type;
+			view.enableRefuseButton(action.refusable);
+		}
 	}
 
 	public void endTurn() 
 	{
-		if(model.getGameState() == GameState.NONE)
+		if(actionRequested == RequestType.NONE)
 		{
 			model.endTurn();
 			model.startTurn();
@@ -165,10 +187,29 @@ public class GameController
 
 	public void clickOption(int i) 
 	{
-		if(model.getGameState() == GameState.SELECT_OPTION)
+		if(actionRequested == RequestType.SELECT_OPTION)
 		{
-			model.selectOption(i);
+			model.executeAction(i);
 		}
+		refreshView();
+	}
+
+	public void clickDiscard(int index) 
+	{
+		Card card = model.getActivePlayer().getDiscard().get(index);
+		if(actionRequested == RequestType.NONE)
+		{
+			//Nothing
+		}
+		else if(actionRequested == RequestType.SELECT_DISCARD || actionRequested == RequestType.SELECT_HAND_OR_DISCARD)
+		{
+			model.executeAction(card);
+		}
+		refreshView();
+	}
+
+	public void refuseAction() {
+		model.refuseAction();
 		refreshView();
 	}
 }

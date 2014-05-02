@@ -1,10 +1,11 @@
 package cards;
 
+import model.ActionRequest.RequestType;
 import model.CardFaction;
+import model.CardLocation;
 import model.CardType;
-import model.GameAction;
+import model.ActionNotice;
 import model.GameModel;
-import model.GameState;
 import model.ResourceType;
 
 public class CardAvataroftheFallen extends Card {
@@ -22,21 +23,15 @@ public class CardAvataroftheFallen extends Card {
 	public void onDefeat(GameModel model)
 	{
 		model.addHonor(honor);
-		model.addState(GameState.SELECT_CENTER);
-		model.addObserver(this);
+		model.requestAction(RequestType.SELECT_CENTER, this, false);
 	}
 	
 	@Override
-	public void update(GameModel model, GameAction trigger, Object arg) 
-	{	
-		if(trigger == GameAction.SELECT_CENTER && arg instanceof Card)
-		{
-			Card card = (Card) arg;
-			model.removeState(GameState.SELECT_CENTER);
-			model.removeObserver(this);
-			
-			model.acquireDefeatFree(card);
-		}
+	public void execute(GameModel model, RequestType type, Object arg) 
+	{
+		super.execute(model, type, arg);
+		Card card = (Card) arg;
+		model.acquireDefeatFree(card);
 	}
 	
 	public boolean isBanishable()

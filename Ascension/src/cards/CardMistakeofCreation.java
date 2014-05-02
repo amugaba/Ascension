@@ -3,10 +3,10 @@ package cards;
 import model.CardFaction;
 import model.CardLocation;
 import model.CardType;
-import model.GameAction;
+import model.ActionNotice;
 import model.GameModel;
-import model.GameState;
 import model.ResourceType;
+import model.ActionRequest.RequestType;
 
 public class CardMistakeofCreation extends Card {
 	
@@ -23,49 +23,40 @@ public class CardMistakeofCreation extends Card {
 	public void onDefeat(GameModel model)
 	{
 		model.addHonor(honor);
-		model.addState(GameState.SELECT_CENTER); //ask to banish in center, then in discard
-		model.setRefusable(true);
-		model.addObserver(this);
+		model.requestAction(RequestType.SELECT_CENTER, this, true);
+		model.requestAction(RequestType.SELECT_DISCARD, this, true);
 	}
 	
 	@Override
-	public void update(GameModel model, GameAction trigger, Object arg) 
-	{	
-		if(trigger == GameAction.SELECT_CENTER && arg instanceof Card)
+	public boolean isActionArgumentValid(GameModel model, RequestType type, Object arg) 
+	{
+		if(type == RequestType.SELECT_CENTER && arg instanceof Card)
 		{
 			Card card = (Card) arg;
 			if(card.isBanishable())
 			{
-				model.removeState(GameState.SELECT_CENTER);
-				model.addState(GameState.SELECT_DISCARD);
-				
-				model.moveCard(card, CardLocation.CENTER_VOID);
+				return true;
 			}
 		}
-		if(trigger == GameAction.SELECT_DISCARD && arg instanceof Card)
+		if(type == RequestType.SELECT_DISCARD && arg instanceof Card)
 		{
-			Card card = (Card) arg;
-			model.removeState(GameState.SELECT_DISCARD);
-			model.removeObserver(this);
-			model.setRefusable(false);
-			
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public void execute(GameModel model, RequestType type, Object arg) 
+	{
+		super.execute(model, type, arg);
+		Card card = (Card) arg;		
+		if(type == RequestType.SELECT_CENTER)
+		{
+			model.moveCard(card, CardLocation.CENTER_VOID);		
+		}
+		if(type == RequestType.SELECT_DISCARD)
+		{
 			model.moveCard(card, CardLocation.CENTER_VOID);
-		}
-		
-		//If the action is refused, move to the next step, but don't do the action
-		if(trigger == GameAction.REFUSE)
-		{
-			if(model.getGameState() == GameState.SELECT_CENTER)
-			{
-				model.removeState(GameState.SELECT_CENTER);
-				model.addState(GameState.SELECT_DISCARD);
-			}
-			else if(model.getGameState() == GameState.SELECT_DISCARD)
-			{
-				model.removeState(GameState.SELECT_DISCARD);
-				model.removeObserver(this);
-				model.setRefusable(false);
-			}
 		}
 	}
 }
