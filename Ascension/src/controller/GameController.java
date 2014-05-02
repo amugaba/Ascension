@@ -57,7 +57,7 @@ public class GameController
 		{
 			model.playCard(card);
 		}
-		else if(model.getGameState() == GameState.SELECT_HAND)
+		else if(model.getGameState() == GameState.SELECT_HAND || model.getGameState() == GameState.SELECT_HAND_OR_DISCARD)
 		{
 			model.selectCard(card);
 		}

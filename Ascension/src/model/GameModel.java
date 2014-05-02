@@ -488,7 +488,7 @@ public class GameModel
 		case PLAYER_CONSTRUCTS: card.owner.getConstructs().add(card); break;
 		case PLAYED_CARDS: playedCards.add(card); break;
 		case CENTER_DECK: centerDeck.add(card); break;
-		case CENTER_VOID: if(card.getFactions().contains(CardFaction.BASIC)) voidDeck.add(card); break;
+		case CENTER_VOID: if(!card.getFactions().contains(CardFaction.BASIC)) voidDeck.add(card); break;
 		default: throw new IllegalArgumentException("Unimplemented: Moving to " + newLocation.toString());
 		}
 		card.location = newLocation;

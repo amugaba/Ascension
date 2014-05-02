@@ -107,7 +107,7 @@ public final class ViewUtil
 		cardImages.put("Twofold Askara",new ImageIcon(GameView.class.getResource("/cards/images/Twofold-Askara.jpg")));
 		cardImages.put("Void Initiate",new ImageIcon(GameView.class.getResource("/cards/images/Void-Initiate.jpg")));
 		cardImages.put("Voidthirster",new ImageIcon(GameView.class.getResource("/cards/images/Voidthirster.jpg")));
-		cardImages.put("Watchmaker's Atlas",new ImageIcon(GameView.class.getResource("/cards/images/Watchmakers-Atlas.jpg")));
+		cardImages.put("Watchmaker's Altar",new ImageIcon(GameView.class.getResource("/cards/images/Watchmakers-Altar.jpg")));
 		cardImages.put("Wind Tyrant",new ImageIcon(GameView.class.getResource("/cards/images/Wind-Tyrant.jpg")));
 		cardImages.put("Wolf Shaman",new ImageIcon(GameView.class.getResource("/cards/images/Wolf-Shaman.jpg")));
 		cardImages.put("Xeron, Duke of Lies",new ImageIcon(GameView.class.getResource("/cards/images/Xeron-Duke-of-Lies.jpg")));
